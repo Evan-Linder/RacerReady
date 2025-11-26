@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign / Create Account — Racer Ready</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta name="robots" content="noindex">
+
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-inner container">
+            <div class="brand">
+                <img src="images/logo.png" alt="Racer Ready Logo" class="logo">
+                <h1>Racer Ready</h1>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="signin-btn" aria-label="Back to home">Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container auth-page" role="main">
+        <div class="auth-card">
+            <div class="auth-tabs" role="tablist" aria-label="Authentication tabs">
+                <button id="tab-signin" class="tab active" role="tab" aria-selected="true"
+                    aria-controls="panel-signin">Sign in</button>
+                <button id="tab-create" class="tab" role="tab" aria-selected="false" aria-controls="panel-create">Create
+                    account</button>
+            </div>
+
+            <div class="auth-panels">
+                <form id="panel-signin" class="auth-panel" autocomplete="on">
+                    <label for="si-email">Email</label>
+                    <input id="si-email" name="email" type="email" placeholder="you@example.com" required />
+
+                    <label for="si-pass">Password</label>
+                    <input id="si-pass" name="password" type="password" placeholder="••••••••" required />
+
+                    <div class="form-row">
+                        <button type="submit" class="btn primary">Sign in</button>
+                        <a class="btn" href="#">Forgot?</a>
+                    </div>
+                </form>
+
+                <form id="panel-create" class="auth-panel hidden" autocomplete="on">
+                    <label for="ca-name">Full name</label>
+                    <input id="ca-name" name="name" type="text" placeholder="Your name" required />
+
+                    <label for="ca-email">Email</label>
+                    <input id="ca-email" name="email" type="email" placeholder="you@example.com" required />
+
+                    <label for="ca-pass">Password</label>
+                    <input id="ca-pass" name="password" type="password" placeholder="Create a password" required />
+
+                    <label for="ca-pass2">Confirm password</label>
+                    <input id="ca-pass2" name="password2" type="password" placeholder="Confirm password" required />
+
+                    <div class="form-row">
+                        <button type="submit" class="btn primary">Create account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <small>&copy; 2025 Racer Ready</small>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

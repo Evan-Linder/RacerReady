@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>App — Racer Ready</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="brand" aria-hidden="true"></div>
+            <div class="header-actions">
+                <div class="profile-menu" data-role="profile-menu" aria-hidden="false">
+                    <button class="profile-btn" aria-haspopup="true" aria-expanded="false"
+                        aria-label="Open profile menu">
+                        <span class="avatar">RR</span>
+                    </button>
+                    <div class="profile-dropdown hidden" role="menu" aria-hidden="true">
+                        <a href="profile.html" role="menuitem" class="profile-link">Profile</a>
+                        <button class="logout" role="menuitem">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Logo above side panel -->
+    <div class="logo-above-panel">
+        <img src="images/logo.png" alt="Racer Ready Logo" class="app-logo">
+    </div>
+
+    <!-- Left side translucent panel with action buttons -->
+    <aside class="side-panel" aria-label="Actions">
+        <nav class="side-nav">
+            <button class="side-btn primary" data-section="home">Home</button>
+            <button class="side-btn accent" data-section="start">Start</button>
+            <button class="side-btn outline" data-section="build">Build/Tuning</button>
+            <button class="side-btn ghost" data-section="logs">Logs</button>
+            <button class="side-btn danger" data-section="saved">Saved Builds</button>
+        </nav>
+    </aside>
+
+    <!-- Tagline above app container -->
+    <div class="app-tagline">
+        <h2>Your Dream.</h2>
+        <h2>Your Race.</h2>
+        <h2>Your Victory.</h2>
+    </div>
+
+    <main class="container app-container" role="main">
+        <!-- Default instructions view -->
+        <div class="app-section active" data-section-content="home">
+            <div class="app-instructions">
+                <div class="instruction-card" data-card="start">
+                    <div class="instruction-icon">▶</div>
+                    <h3>Start</h3>
+                    <p>Begin your racing journey and launch into action</p>
+                </div>
+                <div class="instruction-card" data-card="build">
+                    <div class="instruction-icon">⚙</div>
+                    <h3>Build/Tuning</h3>
+                    <p>Create, customize, and fine-tune your kart configuration</p>
+                </div>
+                <div class="instruction-card" data-card="logs">
+                    <div class="instruction-icon">📊</div>
+                    <h3>Logs</h3>
+                    <p>Review your race history and performance analytics</p>
+                </div>
+                <div class="instruction-card" data-card="saved">
+                    <div class="instruction-icon">⭐</div>
+                    <h3>Saved Builds</h3>
+                    <p>Access and manage your saved kart configurations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Section -->
+        <div class="app-section" data-section-content="start">
+            <h2>Are you Ready?</h2>
+            <p>How would you like to begin?</p>
+            <div class="section-content">
+                <div class="choice-buttons">
+                    <button class="choice-btn" data-action="load-saved">
+                        <span class="choice-icon">📂</span>
+                        <span class="choice-label">Load from Saved Build</span>
+                    </button>
+                    <button class="choice-btn" data-action="create-new">
+                        <span class="choice-icon">✨</span>
+                        <span class="choice-label">Create New Build</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build Section -->
+        <div class="app-section" data-section-content="build">
+            <h2>Build & Tune Your Kart</h2>
+            <p>Customize every aspect of your kart's performance</p>
+            <div class="section-content">
+                <div class="setup-tabs">
+                    <button class="setup-tab active" data-setup="frontend">Front End</button>
+                    <button class="setup-tab" data-setup="backend">Rear End</button>
+                    <button class="setup-tab" data-setup="weight">Weight</button>
+                    <button class="setup-tab" data-setup="steering">Steering</button>
+                    <button class="setup-tab" data-setup="engine">Engine</button>
+                    <button class="setup-tab" data-setup="tires">Tires</button>
+                    <button class="setup-tab" data-setup="brakes">Brakes</button>
+                </div>
+
+                <div class="setup-content">
+                    <!-- Front End Setup -->
+                    <div class="setup-panel active" data-setup-panel="frontend">
+                        <h3>Front End Setup</h3>
+                        <ul class="setup-list">
+                            <li><strong>Caster Angle:</strong> Angle of the kingpin line viewed from the side
+                                <div class="setup-slider">
+                                    <input type="range" min="-10" max="10" value="0" class="slider">
+                                    <span class="slider-value">0°</span>
+                                </div>
+                            </li>
+                            <li><strong>Camber Angle:</strong> Angle of the tire relative to the track
+                                <div class="setup-slider">
+                                    <input type="range" min="-5" max="5" value="0" class="slider">
+                                    <span class="slider-value">0°</span>
+                                </div>
+                            </li>
+                            <li><strong>Toe-In / Toe-Out:</strong> Angle of front wheels relative to centerline (affects steering response)</li>
+                            <li><strong>Ackermann Angle:</strong> Difference in steering angle between inner and outer wheel</li>
+                            <li><strong>Front Ride Height:</strong> Adjusting spacers on the kingpins
+                                <div class="setup-slider">
+                                    <input type="range" min="0" max="50" value="25" class="slider">
+                                    <span class="slider-value">25mm</span>
+                                </div>
+                            </li>
+                            <li><strong>Front Torsion Bar:</strong> Inserting or removing the bar (changes chassis stiffness)</li>
+                            <li><strong>Front Hub Length/Type:</strong> Short/long/aluminum/magnesium (affects track width)</li>
+                            <li><strong>Front Track Width:</strong> Using spacers to widen or narrow wheel distance
+                                <div class="setup-slider">
+                                    <input type="range" min="130" max="160" value="145" class="slider">
+                                    <span class="slider-value">145mm</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Rear End Setup -->
+                    <div class="setup-panel" data-setup-panel="backend">
+                        <h3>Rear End Setup</h3>
+                        <ul class="setup-list">
+                            <li><strong>Rear Axle Stiffeners:</strong> Adding or removing seat stays/axle clamps</li>
+                            <li><strong>Rear Axle Type:</strong> Soft, medium, or hard axle stiffness</li>
+                            <li><strong>Rear Track Width:</strong> Adjusting hub position (most critical handling adjustment)
+                                <div class="setup-slider">
+                                    <input type="range" min="140" max="170" value="155" class="slider">
+                                    <span class="slider-value">155mm</span>
+                                </div>
+                            </li>
+                            <li><strong>Rear Hub Length/Type:</strong> Short/long/aluminum/magnesium</li>
+                            <li><strong>Rear Ride Height:</strong> Adjusting bearing carrier position on frame
+                                <div class="setup-slider">
+                                    <input type="range" min="0" max="50" value="25" class="slider">
+                                    <span class="slider-value">25mm</span>
+                                </div>
+                            </li>
+                            <li><strong>Seat Stays/Braces:</strong> Connecting seat to chassis/bearing carriers (affects stiffness)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Weight Distribution -->
+                    <div class="setup-panel" data-setup-panel="weight">
+                        <h3>Weight Distribution</h3>
+                        <ul class="setup-list">
+                            <li><strong>Driver Seat Position:</strong> Longitudinal (fore/aft) and lateral (side-to-side) positioning
+                                <div class="setup-slider">
+                                    <label>Fore/Aft:</label>
+                                    <input type="range" min="-50" max="50" value="0" class="slider">
+                                    <span class="slider-value">0mm</span>
+                                </div>
+                                <div class="setup-slider">
+                                    <label>Side-to-Side:</label>
+                                    <input type="range" min="-30" max="30" value="0" class="slider">
+                                    <span class="slider-value">0mm</span>
+                                </div>
+                            </li>
+                            <li><strong>Ballast Placement:</strong> Position and amount of added lead weight
+                                <div class="setup-slider">
+                                    <input type="range" min="0" max="10" value="0" class="slider">
+                                    <span class="slider-value">0kg</span>
+                                </div>
+                            </li>
+                            <li><strong>Fuel Tank Level:</strong> For practice and data tracking</li>
+                        </ul>
+                    </div>
+
+                    <!-- Steering & Seat -->
+                    <div class="setup-panel" data-setup-panel="steering">
+                        <h3>Steering & Seat Adjustments</h3>
+                        <ul class="setup-list">
+                            <li><strong>Steering Column Angle:</strong> Adjusting tilt for comfort and control
+                                <div class="setup-slider">
+                                    <input type="range" min="-20" max="20" value="0" class="slider">
+                                    <span class="slider-value">0°</span>
+                                </div>
+                            </li>
+                            <li><strong>Steering Wheel Diameter/Type:</strong> Different sizes for various preferences</li>
+                            <li><strong>Steering Wheel Spacing:</strong> Adjusting hub extension for reach
+                                <div class="setup-slider">
+                                    <input type="range" min="0" max="30" value="15" class="slider">
+                                    <span class="slider-value">15mm</span>
+                                </div>
+                            </li>
+                            <li><strong>Seat Model/Size:</strong> Choosing the right seat for your body</li>
+                            <li><strong>Seat Mounting:</strong> Height, depth, and angle adjustments
+                                <div class="setup-slider">
+                                    <label>Height:</label>
+                                    <input type="range" min="0" max="40" value="20" class="slider">
+                                    <span class="slider-value">20mm</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Engine & Drivetrain -->
+                    <div class="setup-panel" data-setup-panel="engine">
+                        <h3>Engine & Drivetrain</h3>
+                        <ul class="setup-list">
+                            <li><strong>Rear Sprocket Size:</strong> Adjusting teeth count for gearing
+                                <div class="setup-slider">
+                                    <input type="range" min="50" max="80" value="65" class="slider">
+                                    <span class="slider-value">65T</span>
+                                </div>
+                            </li>
+                            <li><strong>Front Sprocket/Clutch Bell:</strong> Teeth adjustment for drivetrain ratio
+                                <div class="setup-slider">
+                                    <input type="range" min="7" max="13" value="10" class="slider">
+                                    <span class="slider-value">10T</span>
+                                </div>
+                            </li>
+                            <li><strong>Clutch Engagement RPM:</strong> Spring tension and weight adjustments
+                                <div class="setup-slider">
+                                    <input type="range" min="3000" max="7000" value="5000" class="slider">
+                                    <span class="slider-value">5000 RPM</span>
+                                </div>
+                            </li>
+                            <li><strong>Carburetor Jetting:</strong> High-speed and low-speed jet tuning</li>
+                            <li><strong>Fuel/Oil Mixture:</strong> Proper ratios for your engine</li>
+                            <li><strong>Ignition Timing:</strong> Advance or retard timing, spark plug heat range</li>
+                            <li><strong>Exhaust System:</strong> Pipe length and volume for performance</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tires -->
+                    <div class="setup-panel" data-setup-panel="tires">
+                        <h3>Tire Adjustments</h3>
+                        <ul class="setup-list">
+                            <li><strong>Tire Pressure:</strong> Measured hot and cold for optimal grip
+                                <div class="setup-slider">
+                                    <label>Cold Pressure:</label>
+                                    <input type="range" min="0.5" max="2.0" value="1.2" step="0.1" class="slider">
+                                    <span class="slider-value">1.2 PSI</span>
+                                </div>
+                                <div class="setup-slider">
+                                    <label>Hot Pressure:</label>
+                                    <input type="range" min="0.5" max="2.0" value="1.4" step="0.1" class="slider">
+                                    <span class="slider-value">1.4 PSI</span>
+                                </div>
+                            </li>
+                            <li><strong>Tire Compound:</strong> Set selection for track conditions</li>
+                            <li><strong>Tire Treatment/Prep:</strong> Where applicable and legal</li>
+                            <li><strong>Tire Size/Diameter:</strong> Different sizes for various setups</li>
+                            <li><strong>Wheel Material/Size:</strong> Aluminum, magnesium (affects heat transfer)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Braking System -->
+                    <div class="setup-panel" data-setup-panel="brakes">
+                        <h3>Braking System</h3>
+                        <ul class="setup-list">
+                            <li><strong>Brake Pad Compound:</strong> Different compounds for various conditions</li>
+                            <li><strong>Brake Disc Type/Material:</strong> Vented/solid, steel/cast iron</li>
+                            <li><strong>Brake Bias:</strong> Front/rear split for balanced stopping
+                                <div class="setup-slider">
+                                    <input type="range" min="0" max="100" value="50" class="slider">
+                                    <span class="slider-value">50% Front</span>
+                                </div>
+                            </li>
+                            <li><strong>Master Cylinder/Caliper:</strong> Piston size adjustments</li>
+                            <li><strong>Pedal Ratio/Feel:</strong> Adjusting pedal position and response
+                                <div class="setup-slider">
+                                    <input type="range" min="-20" max="20" value="0" class="slider">
+                                    <span class="slider-value">0mm</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div class="app-section" data-section-content="logs">
+            <h2>Race Analytics</h2>
+            <p>Review your performance metrics and race history.</p>
+            <div class="section-content">
+                <p>Analytics coming soon...</p>
+            </div>
+        </div>
+
+        <!-- Saved Builds Section -->
+        <div class="app-section" data-section-content="saved">
+            <h2>Saved Builds</h2>
+            <p>Manage and load your favorite kart configurations.</p>
+            <div class="section-content">
+                <p>Your saved builds will appear here...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer app-footer">
+        <small>&copy; 2025 Racer Ready</small>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
