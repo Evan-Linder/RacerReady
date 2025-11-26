@@ -56,6 +56,58 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Start section flow: show choice menu -> settings menu -> navigate into Build section
+    function setupStartFlow() {
+        const choiceMenu = document.getElementById('start-choice-menu');
+        const settingsMenu = document.getElementById('start-settings-menu');
+        const backBtn = document.getElementById('back-to-choice');
+        const settingsTitle = document.getElementById('settings-title');
+
+        if (!choiceMenu || !settingsMenu || !backBtn) return;
+
+        // When a choice (load or create) is clicked, show the settings menu
+        choiceMenu.addEventListener('click', function (e) {
+            const btn = e.target.closest('.choice-btn');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action'); // 'load-saved' or 'create-new'
+            if (settingsTitle) {
+                settingsTitle.textContent = action === 'load-saved' ? 'Continue Saved Build — Select Settings' : 'Create New Build — Select Settings';
+            }
+            choiceMenu.style.display = 'none';
+            settingsMenu.style.display = 'block';
+        });
+
+        // Back button returns to the initial choice menu
+        backBtn.addEventListener('click', function () {
+            settingsMenu.style.display = 'none';
+            choiceMenu.style.display = ''; // revert to stylesheet default (flex)
+        });
+
+        // Handle selection of settings (tire / kart)
+        settingsMenu.addEventListener('click', function (e) {
+            const btn = e.target.closest('.settings-btn');
+            if (!btn) return;
+            const settings = btn.getAttribute('data-settings'); // 'tire' or 'kart'
+
+            // Navigate to Build section using the sidebar button (if present)
+            const buildBtn = document.querySelector('.side-btn[data-section="build"]');
+            if (buildBtn) buildBtn.click();
+
+            // Activate the correct setup tab
+            if (settings === 'tire') {
+                const tab = document.querySelector('.setup-tab[data-setup="tires"]');
+                if (tab) tab.click();
+            } else if (settings === 'kart') {
+                // Prefer chassis tab; fallback to frontend
+                const tab = document.querySelector('.setup-tab[data-setup="chassis"]') || document.querySelector('.setup-tab[data-setup="frontend"]');
+                if (tab) tab.click();
+            }
+
+            // Optionally hide settings menu after navigation
+            settingsMenu.style.display = 'none';
+        });
+    }
+
     // Auth forms and tab switching on sign.html
     function setupAuthForms() {
         const tabSignin = document.getElementById('tab-signin');
@@ -204,5 +256,6 @@ document.addEventListener('DOMContentLoaded', function () {
     guardAppPage();
     setupAppSections();
     setupTabs();
+    setupStartFlow();
     setupSliders();
 });

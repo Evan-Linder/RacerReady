@@ -82,7 +82,8 @@
             <h2>Are you Ready?</h2>
             <p>How would you like to begin?</p>
             <div class="section-content">
-                <div class="choice-buttons">
+                <!-- Choice Menu (Initial) -->
+                <div class="choice-buttons" id="start-choice-menu">
                     <button class="choice-btn" data-action="load-saved">
                         <span class="choice-icon">📂</span>
                         <span class="choice-label">Load from Saved Build</span>
@@ -91,6 +92,26 @@
                         <span class="choice-icon">✨</span>
                         <span class="choice-label">Create New Build</span>
                     </button>
+                </div>
+
+                <!-- Settings Menu (Hidden initially) -->
+                <div class="settings-menu" id="start-settings-menu" style="display: none;">
+                    <div class="settings-header">
+                        <button class="back-btn" id="back-to-choice">&larr; Back</button>
+                        <h3 id="settings-title">Select Settings</h3>
+                    </div>
+                    <div class="settings-options">
+                        <button class="settings-btn" data-settings="tire">
+                            <span class="settings-icon">🛞</span>
+                            <span class="settings-label">Tire Settings</span>
+                            <span class="settings-desc">Adjust pressure, compound, and stagger</span>
+                        </button>
+                        <button class="settings-btn" data-settings="kart">
+                            <span class="settings-icon">🏎️</span>
+                            <span class="settings-label">Kart Settings</span>
+                            <span class="settings-desc">Chassis, weight, alignment, and drivetrain</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,10 +124,10 @@
                 <div class="setup-tabs">
                     <button class="setup-tab active" data-setup="frontend">Front End</button>
                     <button class="setup-tab" data-setup="backend">Rear End</button>
-                    <button class="setup-tab" data-setup="weight">Weight</button>
-                    <button class="setup-tab" data-setup="steering">Steering</button>
-                    <button class="setup-tab" data-setup="engine">Engine</button>
+                    <button class="setup-tab" data-setup="weight">Weight & Balance</button>
+                    <button class="setup-tab" data-setup="chassis">Chassis</button>
                     <button class="setup-tab" data-setup="tires">Tires</button>
+                    <button class="setup-tab" data-setup="drivetrain">Drivetrain</button>
                     <button class="setup-tab" data-setup="brakes">Brakes</button>
                 </div>
 
@@ -115,33 +136,53 @@
                     <div class="setup-panel active" data-setup-panel="frontend">
                         <h3>Front End Setup</h3>
                         <ul class="setup-list">
-                            <li><strong>Caster Angle:</strong> Angle of the kingpin line viewed from the side
-                                <div class="setup-slider">
-                                    <input type="range" min="-10" max="10" value="0" class="slider">
-                                    <span class="slider-value">0°</span>
-                                </div>
+                            <li>
+                                <strong>Caster:</strong> The angle of the kingpin relative to the ground when viewed from the side.
+                                <ul class="sub-info">
+                                    <li>Increased Caster: Increases front-end grip and jacking effect throughout the corner (more aggressive turn-in).</li>
+                                    <li>Decreased Caster: Decreases front-end grip.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 3-8°" class="setup-input" min="-10" max="10">
                             </li>
-                            <li><strong>Camber Angle:</strong> Angle of the tire relative to the track
-                                <div class="setup-slider">
-                                    <input type="range" min="-5" max="5" value="0" class="slider">
-                                    <span class="slider-value">0°</span>
-                                </div>
+                            <li>
+                                <strong>Camber:</strong> The angle of the wheel relative to the vertical axis when viewed from the front.
+                                <ul class="sub-info">
+                                    <li>Negative Camber: Top of tire leans in; can improve turn-in but may reduce mid-corner grip.</li>
+                                    <li>Positive Camber: Top of tire leans out; often used on right front to maximize contact patch under cornering load.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: -2 to 2°" class="setup-input" min="-5" max="5">
                             </li>
-                            <li><strong>Toe-In / Toe-Out:</strong> Angle of front wheels relative to centerline (affects steering response)</li>
-                            <li><strong>Ackermann Angle:</strong> Difference in steering angle between inner and outer wheel</li>
-                            <li><strong>Front Ride Height:</strong> Adjusting spacers on the kingpins
-                                <div class="setup-slider">
-                                    <input type="range" min="0" max="50" value="25" class="slider">
-                                    <span class="slider-value">25mm</span>
-                                </div>
+                            <li>
+                                <strong>Toe:</strong> The angle of the front wheels relative to each other (parallel, pointing in, or pointing out).
+                                <ul class="sub-info">
+                                    <li>Toe Out: Wheels point slightly outward; increases responsiveness and turn-in (most common).</li>
+                                    <li>Toe In: Wheels point slightly inward; rarely used.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., 0-3mm toe-out" class="setup-input">
                             </li>
-                            <li><strong>Front Torsion Bar:</strong> Inserting or removing the bar (changes chassis stiffness)</li>
-                            <li><strong>Front Hub Length/Type:</strong> Short/long/aluminum/magnesium (affects track width)</li>
-                            <li><strong>Front Track Width:</strong> Using spacers to widen or narrow wheel distance
-                                <div class="setup-slider">
-                                    <input type="range" min="130" max="160" value="145" class="slider">
-                                    <span class="slider-value">145mm</span>
-                                </div>
+                            <li>
+                                <strong>Ackermann Steering Geometry:</strong> The relationship between the steering angles of the inside and outside front wheels.
+                                <ul class="sub-info">
+                                    <li>Increased Ackermann: Inside wheel turns more than outside; generally for tighter, slower corners.</li>
+                                    <li>Decreased Ackermann: Inside and outside wheels turn similarly; generally for faster, sweeping corners.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 1-3°" class="setup-input" min="0" max="10">
+                            </li>
+                            <li>
+                                <strong>Front Ride Height:</strong> Adjusted by moving spacers on the spindles.
+                                <ul class="sub-info">
+                                    <li>Raising Front Ride Height (Lowering Spindles): Increases front-end grip (more weight transfer).</li>
+                                    <li>Lowering Front Ride Height (Raising Spindles): Decreases front-end grip.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 10-30mm" class="setup-input" min="0" max="50">
+                            </li>
+                            <li>
+                                <strong>Front Track Width:</strong> Adjusted by moving spacers on the spindles.
+                                <ul class="sub-info">
+                                    <li>Wider Front Track: Increases front-end bite/grip and responsiveness (good for a "tight" kart).</li>
+                                    <li>Narrower Front Track: Decreases front-end bite (good for a "loose" kart).</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 130-160mm" class="setup-input" min="120" max="170">
                             </li>
                         </ul>
                     </div>
@@ -150,128 +191,182 @@
                     <div class="setup-panel" data-setup-panel="backend">
                         <h3>Rear End Setup</h3>
                         <ul class="setup-list">
-                            <li><strong>Rear Axle Stiffeners:</strong> Adding or removing seat stays/axle clamps</li>
-                            <li><strong>Rear Axle Type:</strong> Soft, medium, or hard axle stiffness</li>
-                            <li><strong>Rear Track Width:</strong> Adjusting hub position (most critical handling adjustment)
-                                <div class="setup-slider">
-                                    <input type="range" min="140" max="170" value="155" class="slider">
-                                    <span class="slider-value">155mm</span>
-                                </div>
+                            <li>
+                                <strong>Rear Track Width:</strong> Adjusted by moving rear hubs or spacers on the axle.
+                                <ul class="sub-info">
+                                    <li>Narrower Rear Track: Increases weight transfer and lift of inside-rear wheel (more "jacks" the kart, increasing rotation/bite).</li>
+                                    <li>Wider Rear Track: Decreases rear grip and rotation (good for a kart that is too "loose" or "free").</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 140-170mm" class="setup-input" min="130" max="180">
                             </li>
-                            <li><strong>Rear Hub Length/Type:</strong> Short/long/aluminum/magnesium</li>
-                            <li><strong>Rear Ride Height:</strong> Adjusting bearing carrier position on frame
-                                <div class="setup-slider">
-                                    <input type="range" min="0" max="50" value="25" class="slider">
-                                    <span class="slider-value">25mm</span>
-                                </div>
+                            <li>
+                                <strong>Rear Axle Height:</strong> Adjusted by moving bearing hangers.
+                                <ul class="sub-info">
+                                    <li>Raising Rear Ride Height: Increases weight transfer and rear grip/rotation (more jacking).</li>
+                                    <li>Lowering Rear Ride Height: Decreases weight transfer and rear grip.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 10-30mm" class="setup-input" min="0" max="50">
                             </li>
-                            <li><strong>Seat Stays/Braces:</strong> Connecting seat to chassis/bearing carriers (affects stiffness)</li>
+                            <li>
+                                <strong>Rear Axle Hardness:</strong> Axles come in different materials/thicknesses (soft, medium, hard).
+                                <ul class="sub-info">
+                                    <li>Harder Axle: Reduces flex, providing more stability and freeing up the kart.</li>
+                                    <li>Softer Axle: Increases flex, increasing rear grip and rotation.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Soft/Medium/Hard" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Torsion Bars/Stiffeners (Rear):</strong> Inserting or removing bars.
+                                <ul class="sub-info">
+                                    <li>Installing/Stiffening: Increases chassis rigidity (useful on high-grip tracks but can cause understeer if too stiff).</li>
+                                    <li>Removing/Loosening: Increases chassis flex, increasing grip on low-grip or bumpy surfaces.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Installed/Removed" class="setup-input">
+                            </li>
                         </ul>
                     </div>
 
                     <!-- Weight Distribution -->
                     <div class="setup-panel" data-setup-panel="weight">
-                        <h3>Weight Distribution</h3>
+                        <h3>Weight & Balance</h3>
                         <ul class="setup-list">
-                            <li><strong>Driver Seat Position:</strong> Longitudinal (fore/aft) and lateral (side-to-side) positioning
-                                <div class="setup-slider">
-                                    <label>Fore/Aft:</label>
-                                    <input type="range" min="-50" max="50" value="0" class="slider">
-                                    <span class="slider-value">0mm</span>
-                                </div>
-                                <div class="setup-slider">
-                                    <label>Side-to-Side:</label>
-                                    <input type="range" min="-30" max="30" value="0" class="slider">
-                                    <span class="slider-value">0mm</span>
-                                </div>
+                            <li>
+                                <strong>Nose Weight Percentage:</strong> The percentage of total weight on the front axle.
+                                <ul class="sub-info">
+                                    <li>Increase Nose Weight: Increases front-end grip/bite.</li>
+                                    <li>Decrease Nose Weight: Decreases front-end grip/bite.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 35-50%" class="setup-input" min="0" max="100">
                             </li>
-                            <li><strong>Ballast Placement:</strong> Position and amount of added lead weight
-                                <div class="setup-slider">
-                                    <input type="range" min="0" max="10" value="0" class="slider">
-                                    <span class="slider-value">0kg</span>
-                                </div>
+                            <li>
+                                <strong>Left Side Weight Percentage:</strong> The percentage of total weight on the left side.
+                                <ul class="sub-info">
+                                    <li>Increase Left Side Weight: Shifts weight to the left (crucial for turning left on an oval). Increases left-side load and overall side bite.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 45-55%" class="setup-input" min="0" max="100">
                             </li>
-                            <li><strong>Fuel Tank Level:</strong> For practice and data tracking</li>
-                        </ul>
-                    </div>
-
-                    <!-- Steering & Seat -->
-                    <div class="setup-panel" data-setup-panel="steering">
-                        <h3>Steering & Seat Adjustments</h3>
-                        <ul class="setup-list">
-                            <li><strong>Steering Column Angle:</strong> Adjusting tilt for comfort and control
-                                <div class="setup-slider">
-                                    <input type="range" min="-20" max="20" value="0" class="slider">
-                                    <span class="slider-value">0°</span>
-                                </div>
+                            <li>
+                                <strong>Cross Weight Percentage (Bite):</strong> The diagonal weight distribution (Right-Front + Left-Rear vs. total weight).
+                                <ul class="sub-info">
+                                    <li>Increase Cross Weight: Generally increases lift on inside-rear tire and makes kart tighter (less prone to sliding).</li>
+                                    <li>Decrease Cross Weight: Makes the kart looser (more prone to sliding) and easier to steer.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 45-55%" class="setup-input" min="0" max="100">
                             </li>
-                            <li><strong>Steering Wheel Diameter/Type:</strong> Different sizes for various preferences</li>
-                            <li><strong>Steering Wheel Spacing:</strong> Adjusting hub extension for reach
-                                <div class="setup-slider">
-                                    <input type="range" min="0" max="30" value="15" class="slider">
-                                    <span class="slider-value">15mm</span>
-                                </div>
-                            </li>
-                            <li><strong>Seat Model/Size:</strong> Choosing the right seat for your body</li>
-                            <li><strong>Seat Mounting:</strong> Height, depth, and angle adjustments
-                                <div class="setup-slider">
-                                    <label>Height:</label>
-                                    <input type="range" min="0" max="40" value="20" class="slider">
-                                    <span class="slider-value">20mm</span>
-                                </div>
+                            <li>
+                                <strong>Driver/Seat Position:</strong> Adjusting seat forward/backward and vertical height.
+                                <ul class="sub-info">
+                                    <li>Moving Seat Forward: Increases nose weight percentage, adding front grip.</li>
+                                    <li>Moving Seat Backward: Decreases nose weight percentage, adding rear grip/traction.</li>
+                                    <li>Raising Seat (Higher CG): Increases weight transfer, which can add grip in low-grip conditions.</li>
+                                    <li>Lowering Seat (Lower CG): Reduces weight transfer, making the kart more stable.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Centered, -20mm fore" class="setup-input">
                             </li>
                         </ul>
                     </div>
 
-                    <!-- Engine & Drivetrain -->
-                    <div class="setup-panel" data-setup-panel="engine">
-                        <h3>Engine & Drivetrain</h3>
+                    <!-- Chassis Stiffness -->
+                    <div class="setup-panel" data-setup-panel="chassis">
+                        <h3>Chassis Stiffness</h3>
                         <ul class="setup-list">
-                            <li><strong>Rear Sprocket Size:</strong> Adjusting teeth count for gearing
-                                <div class="setup-slider">
-                                    <input type="range" min="50" max="80" value="65" class="slider">
-                                    <span class="slider-value">65T</span>
-                                </div>
+                            <li>
+                                <strong>Front Torsion Bars/Stiffeners:</strong> Inserting or removing the bar.
+                                <ul class="sub-info">
+                                    <li>Installing/Stiffening Bars: Increases chassis rigidity (useful on high-grip tracks but can cause understeer if too stiff).</li>
+                                    <li>Removing/Loosening Bars: Increases chassis flex, increasing grip on low-grip or bumpy surfaces.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Soft/Medium/Hard" class="setup-input">
                             </li>
-                            <li><strong>Front Sprocket/Clutch Bell:</strong> Teeth adjustment for drivetrain ratio
-                                <div class="setup-slider">
-                                    <input type="range" min="7" max="13" value="10" class="slider">
-                                    <span class="slider-value">10T</span>
-                                </div>
-                            </li>
-                            <li><strong>Clutch Engagement RPM:</strong> Spring tension and weight adjustments
-                                <div class="setup-slider">
-                                    <input type="range" min="3000" max="7000" value="5000" class="slider">
-                                    <span class="slider-value">5000 RPM</span>
-                                </div>
-                            </li>
-                            <li><strong>Carburetor Jetting:</strong> High-speed and low-speed jet tuning</li>
-                            <li><strong>Fuel/Oil Mixture:</strong> Proper ratios for your engine</li>
-                            <li><strong>Ignition Timing:</strong> Advance or retard timing, spark plug heat range</li>
-                            <li><strong>Exhaust System:</strong> Pipe length and volume for performance</li>
                         </ul>
                     </div>
 
-                    <!-- Tires -->
+                    <!-- Tire Setup -->
                     <div class="setup-panel" data-setup-panel="tires">
                         <h3>Tire Adjustments</h3>
                         <ul class="setup-list">
-                            <li><strong>Tire Pressure:</strong> Measured hot and cold for optimal grip
-                                <div class="setup-slider">
-                                    <label>Cold Pressure:</label>
-                                    <input type="range" min="0.5" max="2.0" value="1.2" step="0.1" class="slider">
-                                    <span class="slider-value">1.2 PSI</span>
-                                </div>
-                                <div class="setup-slider">
-                                    <label>Hot Pressure:</label>
-                                    <input type="range" min="0.5" max="2.0" value="1.4" step="0.1" class="slider">
-                                    <span class="slider-value">1.4 PSI</span>
-                                </div>
+                            <li>
+                                <strong>Tire Pressure (PSI):</strong> Varying pressure in all four tires to tune for track grip and heat.
+                                <ul class="sub-info">
+                                    <li>Left Side vs. Right Side: Right-side tires often run higher pressure than left side to help the kart turn and manage heat.</li>
+                                    <li>Front vs. Rear: Adjustments fine-tune the balance of front-end vs. rear-end grip.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., LF: 1.1, RF: 1.3, LR: 1.2, RR: 1.4 PSI" class="setup-input">
                             </li>
-                            <li><strong>Tire Compound:</strong> Set selection for track conditions</li>
-                            <li><strong>Tire Treatment/Prep:</strong> Where applicable and legal</li>
-                            <li><strong>Tire Size/Diameter:</strong> Different sizes for various setups</li>
-                            <li><strong>Wheel Material/Size:</strong> Aluminum, magnesium (affects heat transfer)</li>
+                            <li>
+                                <strong>Tire Stagger:</strong> The difference in circumference (or diameter) between tires on the same axle.
+                                <ul class="sub-info">
+                                    <li>Rear Stagger (Right Rear > Left Rear): Increase makes the kart turn left more aggressively. Decrease makes the kart track straighter (good for fast, sweeping tracks).</li>
+                                    <li>Front Stagger (Right Front > Left Front): Increase helps the kart turn into the corner.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Rear: +0.5in, Front: +0.3in" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Tire Compound Selection:</strong> Choosing the correct tire compound (soft, medium, hard) for track conditions and temperature.
+                                <ul class="sub-info">
+                                    <li>Soft Compound: More grip in cold/low-traction conditions.</li>
+                                    <li>Hard Compound: Better for hot/high-traction conditions.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Soft, Medium, Hard" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Tire Prep/Conditioning:</strong> Applying chemical treatments to soften rubber, increase grip, or pull moisture from track surface.
+                                <ul class="sub-info">
+                                    <li>Tire Grooming/Siping: Cutting grooves or sipes into tire surface to create biting edges for increased forward and side grip.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Treated, Pre-mount, Siped" class="setup-input">
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Drivetrain & Engine -->
+                    <div class="setup-panel" data-setup-panel="drivetrain">
+                        <h3>Drivetrain & Engine</h3>
+                        <ul class="setup-list">
+                            <li>
+                                <strong>Gearing (Sprocket/Clutch Changes):</strong> Changing the ratio between the engine clutch and the rear axle sprocket.
+                                <ul class="sub-info">
+                                    <li>Smaller Axle Sprocket (Taller Gear): Higher top speed, slower acceleration (good for a long straight).</li>
+                                    <li>Larger Axle Sprocket (Shorter Gear): Better acceleration off the corner, lower top speed (good for tight tracks).</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 50-80 teeth" class="setup-input" min="40" max="100">
+                            </li>
+                            <li>
+                                <strong>Clutch Engagement RPM:</strong> Adjusting the clutch springs or weights to change the engine RPM at which the clutch engages.
+                                <ul class="sub-info">
+                                    <li>Higher Engagement RPM: Delivers a harder "hit" of power, often beneficial.</li>
+                                    <li>Lower Engagement RPM: Smoother power delivery.</li>
+                                </ul>
+                                <input type="number" placeholder="Typical: 3000-7000 RPM" class="setup-input" min="2000" max="10000">
+                            </li>
+                            <li>
+                                <strong>Clutch Material/Type:</strong> Drum or disc clutches require different tuning for heat and track condition.
+                                <ul class="sub-info">
+                                    <li>Drum Clutch: Simpler, good for beginners.</li>
+                                    <li>Disc Clutch: More tunable, better for competitive racing.</li>
+                                </ul>
+                                <input type="text" placeholder="e.g., Drum, Disc" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Front Sprocket/Clutch Bell:</strong> Teeth adjustment for drivetrain ratio.
+                                <input type="number" placeholder="Typical: 7-13 teeth" class="setup-input" min="5" max="20">
+                            </li>
+                            <li>
+                                <strong>Carburetor Jetting:</strong> High-speed and low-speed jet tuning.
+                                <input type="text" placeholder="e.g., Main: 110, Idle: 40" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Fuel/Oil Mixture:</strong> Proper ratios for your engine.
+                                <input type="text" placeholder="e.g., 50:1, 32:1" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Ignition Timing:</strong> Advance or retard timing, spark plug heat range.
+                                <input type="text" placeholder="e.g., +5°, BR8ES" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Exhaust System:</strong> Pipe length and volume for performance.
+                                <input type="text" placeholder="e.g., Stock, Performance, 280mm" class="setup-input">
+                            </li>
                         </ul>
                     </div>
 
@@ -279,20 +374,25 @@
                     <div class="setup-panel" data-setup-panel="brakes">
                         <h3>Braking System</h3>
                         <ul class="setup-list">
-                            <li><strong>Brake Pad Compound:</strong> Different compounds for various conditions</li>
-                            <li><strong>Brake Disc Type/Material:</strong> Vented/solid, steel/cast iron</li>
-                            <li><strong>Brake Bias:</strong> Front/rear split for balanced stopping
-                                <div class="setup-slider">
-                                    <input type="range" min="0" max="100" value="50" class="slider">
-                                    <span class="slider-value">50% Front</span>
-                                </div>
+                            <li>
+                                <strong>Brake Pad Compound:</strong> Different compounds for various conditions.
+                                <input type="text" placeholder="e.g., Soft, Medium, Hard" class="setup-input">
                             </li>
-                            <li><strong>Master Cylinder/Caliper:</strong> Piston size adjustments</li>
-                            <li><strong>Pedal Ratio/Feel:</strong> Adjusting pedal position and response
-                                <div class="setup-slider">
-                                    <input type="range" min="-20" max="20" value="0" class="slider">
-                                    <span class="slider-value">0mm</span>
-                                </div>
+                            <li>
+                                <strong>Brake Disc Type/Material:</strong> Vented/solid, steel/cast iron.
+                                <input type="text" placeholder="e.g., Vented Steel" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Brake Bias:</strong> Front/rear split for balanced stopping.
+                                <input type="number" placeholder="Typical: 40-60%" class="setup-input" min="0" max="100">
+                            </li>
+                            <li>
+                                <strong>Master Cylinder/Caliper:</strong> Piston size adjustments.
+                                <input type="text" placeholder="e.g., 14mm, 16mm piston" class="setup-input">
+                            </li>
+                            <li>
+                                <strong>Pedal Ratio/Feel:</strong> Adjusting pedal position and response.
+                                <input type="number" placeholder="Typical: -20 to 20mm" class="setup-input" min="-30" max="30">
                             </li>
                         </ul>
                     </div>
