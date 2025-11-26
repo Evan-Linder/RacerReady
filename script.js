@@ -221,12 +221,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sliders.forEach(slider => {
             const valueDisplay = slider.nextElementSibling;
-            
+
             // Update value on input
             slider.addEventListener('input', function () {
                 let displayValue = this.value;
                 const max = this.getAttribute('max');
-                
+
                 // Format value based on unit (detected from next element)
                 if (valueDisplay && valueDisplay.classList.contains('slider-value')) {
                     if (valueDisplay.textContent.includes('T')) {
