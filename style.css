@@ -88,27 +88,40 @@ body {
     color: #e6eef6;
     padding: 0; /* header will provide padding */
 
-    /* Racing-themed layered background: dark gradient + subtle track stripes + light flare */
-    background-color: #071021;
+    /* Racing-themed red carbon fiber background */
+    background-color: #0a0505;
     background-image:
-        radial-gradient( at 10% 10%, rgba(255,255,255,0.035), transparent 8% ),
-        repeating-linear-gradient( -45deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 40px ),
-        linear-gradient(180deg, #071021 0%, #0f2433 45%, #06202a 100% );
-    background-size: auto, 60px 60px, auto;
-    background-attachment: fixed, fixed, fixed;
+        /* Red spotlight/glow effect */
+        radial-gradient(circle at 20% 20%, rgba(255, 51, 51, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(204, 0, 0, 0.12), transparent 40%),
+        /* Carbon fiber weave pattern */
+        repeating-linear-gradient(90deg, rgba(20, 8, 8, 0.8) 0px, rgba(30, 12, 12, 0.8) 2px, transparent 2px, transparent 4px),
+        repeating-linear-gradient(0deg, rgba(20, 8, 8, 0.8) 0px, rgba(30, 12, 12, 0.8) 2px, transparent 2px, transparent 4px),
+        /* Diagonal racing stripes */
+        repeating-linear-gradient(-45deg, transparent 0, transparent 30px, rgba(255, 51, 51, 0.03) 30px, rgba(255, 51, 51, 0.03) 32px),
+        /* Base dark gradient with red tint */
+        linear-gradient(135deg, #0f0606 0%, #1a0808 30%, #120505 60%, #0d0404 100%);
+    background-size: auto, auto, 4px 4px, 4px 4px, 60px 60px, auto;
+    background-attachment: fixed;
 }
 
-/* Racing stripes overlay (animated) and checkered flag accent */
+/* Racing stripes overlay with red accent glow */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0 4px, transparent 4px 40px);
-    opacity: 0.55;
-    mix-blend-mode: overlay;
-    transform: translateZ(0);
-    animation: stripesMove 20s linear infinite;
+    background-image: 
+        linear-gradient(90deg, transparent 0%, rgba(255, 51, 51, 0.02) 50%, transparent 100%),
+        repeating-linear-gradient(-45deg, rgba(255, 51, 51, 0.015) 0 2px, transparent 2px 40px);
+    opacity: 0.6;
+    mix-blend-mode: screen;
+    animation: shimmer 8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
 }
 
 /* small checkered flag tile used in the hero-aside */
@@ -300,7 +313,7 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
 .profile-menu { display: inline-flex; position: relative; align-items: flex-start; margin-right: 20px; padding-bottom: 20px; }
 .profile-menu.hidden { display: none; }
 .profile-btn {  background: transparent; border: none; cursor: pointer; padding: 0; }
-.avatar { display:inline-block; width:36px; height:36px; border-radius:50%; background: linear-gradient(180deg,var(--accent),var(--accent-2)); color: #fff; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+.avatar { display:inline-block; width:60px; height:60px; border-radius:50%; background: linear-gradient(180deg,var(--accent),var(--accent-2)); color: #fff; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 6px 18px rgba(0,0,0,0.35); object-fit: cover; }
 .profile-dropdown { position: absolute; top: calc(100% - 12px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); color: var(--text); min-width: 50px; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap:8px; box-shadow: 0 14px 30px rgba(0,0,0,0.6); z-index: 10100; }
 .profile-dropdown a, .profile-dropdown button { color: var(--text); text-decoration: none; background: transparent; border: none; text-align: left; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
 .profile-dropdown a:hover, .profile-dropdown button:hover { background: rgba(255,255,255,0.03); }
@@ -911,3 +924,6 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
         font-size: 1.3rem;
         margin: 4px 0;
     }
+}
+
+

@@ -32,13 +32,239 @@
     </header>
 
     <main class="container" role="main">
-        <!-- intentionally blank; profile UI will be added later -->
+        <div style="max-width: 800px; margin: 40px auto; padding: 20px;">
+            
+            <!-- Profile View Mode -->
+            <div id="profile-view-mode">
+                <h1 style="color: rgba(230,238,246,0.95); margin-bottom: 32px; text-align: center;">My Profile</h1>
+                
+                <!-- Edit Button Widget -->
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <button class="btn primary" id="edit-profile-btn" style="font-size: 1rem; padding: 12px 24px;">✏️ Edit Profile</button>
+                </div>
+                
+                <!-- Profile Display -->
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 32px; text-align: center;">
+                    <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+                        <div style="position: relative; width: 150px; height: 150px;">
+                            <img id="view-profile-picture" src="" alt="Profile Picture" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: rgba(230,238,246,0.1); border: 3px solid rgba(230,238,246,0.3); display: none;">
+                            <div id="view-profile-initials" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4rem; font-weight: 600; color: rgba(230,238,246,0.9); background: rgba(230,238,246,0.1); border: 3px solid rgba(230,238,246,0.3);"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 id="view-display-name" style="color: rgba(230,238,246,0.95); font-size: 2rem; margin-bottom: 8px;">Loading...</h2>
+                    <p id="view-email" style="color: rgba(230,238,246,0.7); font-size: 1rem; margin-bottom: 24px;"></p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; text-align: left; max-width: 600px; margin: 0 auto;">
+                        <div style="background: rgba(230,238,246,0.03); padding: 16px; border-radius: 6px;">
+                            <p style="color: rgba(230,238,246,0.6); font-size: 0.85rem; margin-bottom: 4px;">Date of Birth</p>
+                            <p id="view-dob" style="color: rgba(230,238,246,0.9); font-size: 1rem;">Not set</p>
+                        </div>
+                        <div style="background: rgba(230,238,246,0.03); padding: 16px; border-radius: 6px;">
+                            <p style="color: rgba(230,238,246,0.6); font-size: 0.85rem; margin-bottom: 4px;">Age</p>
+                            <p id="view-age" style="color: rgba(230,238,246,0.9); font-size: 1rem;">Not set</p>
+                        </div>
+                        <div style="background: rgba(230,238,246,0.03); padding: 16px; border-radius: 6px;">
+                            <p style="color: rgba(230,238,246,0.6); font-size: 0.85rem; margin-bottom: 4px;">Racing Team</p>
+                            <p id="view-racing-team" style="color: rgba(230,238,246,0.9); font-size: 1rem;">Not set</p>
+                        </div>
+                        <div style="background: rgba(230,238,246,0.03); padding: 16px; border-radius: 6px;">
+                            <p style="color: rgba(230,238,246,0.6); font-size: 0.85rem; margin-bottom: 4px;">Kart Number</p>
+                            <p id="view-kart-number" style="color: rgba(230,238,246,0.9); font-size: 1rem;">Not set</p>
+                        </div>
+                        <div style="background: rgba(230,238,246,0.03); padding: 16px; border-radius: 6px;">
+                            <p style="color: rgba(230,238,246,0.6); font-size: 0.85rem; margin-bottom: 4px;">Racing Class</p>
+                            <p id="view-racing-class" style="color: rgba(230,238,246,0.9); font-size: 1rem;">Not set</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Edit Mode (Hidden by default) -->
+            <div id="profile-edit-mode" style="display: none;">
+                <h1 style="color: rgba(230,238,246,0.95); margin-bottom: 32px; text-align: center;">Edit Profile</h1>
+                
+                <!-- Back Button -->
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <button class="btn" id="back-to-view-btn" style="font-size: 1rem; padding: 12px 24px;">← Back to Profile</button>
+                </div>
+            
+            <!-- Profile Picture Section -->
+            <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <h2 style="color: rgba(230,238,246,0.9); margin-bottom: 16px; font-size: 1.3rem;">Profile Picture</h2>
+                <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+                    <div style="position: relative; width: 120px; height: 120px; flex-shrink: 0;">
+                        <img id="profile-picture-preview" src="" alt="Profile Picture" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: rgba(230,238,246,0.1); border: 2px solid rgba(230,238,246,0.3); display: none;">
+                        <div id="profile-initials" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 600; color: rgba(230,238,246,0.9); background: rgba(230,238,246,0.1); border: 2px solid rgba(230,238,246,0.3);"></div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <input type="file" id="profile-picture-input" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" style="display: none;">
+                        <button class="btn primary" onclick="document.getElementById('profile-picture-input').click()">📷 Upload Picture</button>
+                        <button class="btn" id="remove-picture-btn" style="margin-left: 8px; background: rgba(255,51,51,0.2); border-color: rgba(255,51,51,0.3);">🗑️ Remove</button>
+                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6); margin-top: 8px;">Accepted formats: PNG, JPG, JPEG, GIF, WEBP</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Personal Information Section -->
+            <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <h2 style="color: rgba(230,238,246,0.9); margin-bottom: 16px; font-size: 1.3rem;">Personal Information</h2>
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Display Name</label>
+                <input type="text" id="display-name-input" class="setup-input" placeholder="Your name" style="width: 100%; margin-bottom: 16px;">
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Date of Birth</label>
+                <input type="date" id="dob-input" class="setup-input" style="width: 100%; margin-bottom: 8px;">
+                <p id="age-display" style="font-size: 0.9rem; color: rgba(230,238,246,0.7); margin-bottom: 16px;"></p>
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Racing Team</label>
+                <input type="text" id="racing-team-input" class="setup-input" placeholder="Your team name" style="width: 100%; margin-bottom: 16px;">
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Kart Number</label>
+                <input type="text" id="kart-number-input" class="setup-input" placeholder="e.g., 44, 12X" style="width: 100%; margin-bottom: 16px;">
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Racing Class</label>
+                <input type="text" id="racing-class-input" class="setup-input" placeholder="e.g., Senior, Junior, Masters" style="width: 100%; margin-bottom: 16px;">
+                
+                <button class="btn primary" id="save-personal-info-btn">💾 Save Personal Information</button>
+            </div>
+            
+            <!-- Change Email Section -->
+            <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <h2 style="color: rgba(230,238,246,0.9); margin-bottom: 16px; font-size: 1.3rem;">Change Email</h2>
+                <p style="font-size: 0.9rem; color: rgba(230,238,246,0.7); margin-bottom: 16px;">Current email: <span id="current-email-display" style="color: rgba(51,153,255,0.9);"></span></p>
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Current Password (Required)</label>
+                <input type="password" id="email-current-password" class="setup-input" placeholder="Enter current password" style="width: 100%; margin-bottom: 16px;">
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">New Email</label>
+                <input type="email" id="new-email-input" class="setup-input" placeholder="new.email@example.com" style="width: 100%; margin-bottom: 16px;">
+                
+                <button class="btn primary" id="change-email-btn">✉️ Change Email</button>
+            </div>
+            
+            <!-- Change Password Section -->
+            <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <h2 style="color: rgba(230,238,246,0.9); margin-bottom: 16px; font-size: 1.3rem;">Change Password</h2>
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Current Password</label>
+                <input type="password" id="password-current-password" class="setup-input" placeholder="Enter current password" style="width: 100%; margin-bottom: 16px;">
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">New Password</label>
+                <input type="password" id="new-password-input" class="setup-input" placeholder="Enter new password" style="width: 100%; margin-bottom: 16px;">
+                
+                <label style="display: block; color: rgba(230,238,246,0.8); margin-bottom: 6px;">Confirm New Password</label>
+                <input type="password" id="confirm-new-password-input" class="setup-input" placeholder="Confirm new password" style="width: 100%; margin-bottom: 16px;">
+                
+                <button class="btn primary" id="change-password-btn">🔒 Change Password</button>
+            </div>
+            </div>
+            
+            <!-- Back to App Button -->
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="app.html" class="btn" style="display: inline-block; text-decoration: none;">← Back to App</a>
+            </div>
+        </div>
     </main>
 
     <footer class="site-footer">
         <small>&copy; 2025 Racer Ready</small>
     </footer>
 
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, setDoc, doc, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signOut, onAuthStateChanged, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi_oZtWxAvLa3aKeb_u1L_Gg31Bbf9u-A",
+            authDomain: "racerready-a70d1.firebaseapp.com",
+            projectId: "racerready-a70d1",
+            storageBucket: "racerready-a70d1.firebasestorage.app",
+            messagingSenderId: "101209144078",
+            appId: "1:101209144078:web:133e745dd019211e63f55f"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+
+        // Make Firebase functions available globally
+        window.firebaseDb = db;
+        window.firebaseAuth = auth;
+        window.firebaseStorage = storage;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseGetDoc = getDoc;
+        window.firebaseDeleteDoc = deleteDoc;
+        window.firebaseUpdateDoc = updateDoc;
+        window.firebaseSetDoc = setDoc;
+        window.firebaseDoc = doc;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseOrderBy = orderBy;
+        window.firebaseTimestamp = Timestamp;
+        window.firebaseSignOut = signOut;
+        window.firebaseUpdateEmail = updateEmail;
+        window.firebaseUpdatePassword = updatePassword;
+        window.firebaseReauthenticateWithCredential = reauthenticateWithCredential;
+        window.firebaseEmailAuthProvider = EmailAuthProvider;
+        window.firebaseStorageRef = ref;
+        window.firebaseUploadBytes = uploadBytes;
+        window.firebaseGetDownloadURL = getDownloadURL;
+        window.firebaseDeleteObject = deleteObject;
+
+        // Auth state listener - redirect to sign.html if not logged in
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = 'sign.html';
+            } else {
+                window.currentUser = user;
+                // Load and update avatar
+                const avatarEl = document.querySelector('.avatar');
+                if (avatarEl && user.email) {
+                    try {
+                        // Try to load profile picture from Firestore
+                        const userDocRef = doc(db, 'users', user.uid);
+                        const userDoc = await getDoc(userDocRef);
+                        
+                        if (userDoc.exists() && userDoc.data().profilePicture) {
+                            // Create img element for profile picture
+                            avatarEl.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = userDoc.data().profilePicture;
+                            img.style.width = '100%';
+                            img.style.height = '100%';
+                            img.style.borderRadius = '50%';
+                            img.style.objectFit = 'cover';
+                            avatarEl.appendChild(img);
+                        } else {
+                            // Use initials if no profile picture
+                            const displayName = userDoc.exists() && userDoc.data().displayName 
+                                ? userDoc.data().displayName 
+                                : user.email;
+                            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                            avatarEl.textContent = initials;
+                        }
+                    } catch (error) {
+                        console.error('Error loading profile picture:', error);
+                        // Fallback to initials
+                        const initials = user.email.substring(0, 2).toUpperCase();
+                        avatarEl.textContent = initials;
+                    }
+                }
+                // Setup profile page after user is confirmed
+                if (typeof setupProfilePage === 'function') {
+                    setupProfilePage();
+                }
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 

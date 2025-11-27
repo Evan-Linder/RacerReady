@@ -400,6 +400,10 @@
                         <strong>Wind Conditions:</strong>
                         <input type="text" id="wind-conditions" class="setup-input" placeholder="e.g., Strong headwind on back straight" style="margin-top:8px;">
                     </li>
+                    <li>
+                        <strong>Points Earned:</strong>
+                        <input type="number" id="points-earned" class="setup-input" placeholder="e.g., 100, 75, 50..." min="0" style="margin-top:8px;">
+                    </li>
                 </ul>
             </div>
         </div>
@@ -542,21 +546,11 @@
             <button class="btn" onclick="backToTrackDetails()" style="margin-bottom: 16px;">← Back to Track</button>
             <h2 id="points-standings-title">Points Standings</h2>
             <div class="section-content">
-                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
-                    <p style="color: rgba(230,238,246,0.7); margin-bottom: 16px;">Track your points and standings for this track's racing season.</p>
-                    <label for="total-points-input">Total Points:</label>
-                    <input type="number" id="total-points-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
-                    <label for="current-position-input" style="margin-top:12px;display:block;">Current Position:</label>
-                    <input type="number" id="current-position-input" class="setup-input" placeholder="e.g., 1, 2, 3..." min="1" style="max-width: 100%; margin-top: 8px;">
-                    <label for="races-entered-input" style="margin-top:12px;display:block;">Races Entered:</label>
-                    <input type="number" id="races-entered-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
-                    <label for="wins-input" style="margin-top:12px;display:block;">Wins:</label>
-                    <input type="number" id="wins-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
-                    <label for="podiums-input" style="margin-top:12px;display:block;">Podium Finishes (Top 3):</label>
-                    <input type="number" id="podiums-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
-                    <label for="standings-notes" style="margin-top:12px;display:block;">Season Notes:</label>
-                    <textarea id="standings-notes" class="setup-input" placeholder="Season highlights, goals, etc..." style="max-width: 100%; margin-top: 8px; min-height: 100px; resize: vertical;"></textarea>
-                    <button class="btn primary" id="save-standings-btn" style="margin-top: 16px;">💾 Save Standings</button>
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; margin-bottom: 16px;">
+                    <h3 style="margin: 0 0 8px 0; color: rgba(230,238,246,0.9);">Total Points: <span id="total-points-display">0</span></h3>
+                </div>
+                <div id="points-standings-list">
+                    <!-- Race entries will be populated here by JavaScript -->
                 </div>
             </div>
         </div>
@@ -774,8 +768,8 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, doc, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, setDoc, doc, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signOut, onAuthStateChanged, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -801,24 +795,56 @@
         window.firebaseGetDoc = getDoc;
         window.firebaseDeleteDoc = deleteDoc;
         window.firebaseUpdateDoc = updateDoc;
+        window.firebaseSetDoc = setDoc;
         window.firebaseDoc = doc;
         window.firebaseQuery = query;
         window.firebaseWhere = where;
         window.firebaseOrderBy = orderBy;
         window.firebaseTimestamp = Timestamp;
         window.firebaseSignOut = signOut;
+        window.firebaseUpdateEmail = updateEmail;
+        window.firebaseUpdatePassword = updatePassword;
+        window.firebaseReauthenticateWithCredential = reauthenticateWithCredential;
+        window.firebaseEmailAuthProvider = EmailAuthProvider;
 
         // Auth state listener - redirect to sign.html if not logged in
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = 'sign.html';
             } else {
                 window.currentUser = user;
-                // Update avatar with initials
+                // Load and update avatar
                 const avatarEl = document.querySelector('.avatar');
                 if (avatarEl && user.email) {
-                    const initials = user.email.substring(0, 2).toUpperCase();
-                    avatarEl.textContent = initials;
+                    try {
+                        // Try to load profile picture from Firestore
+                        const userDocRef = doc(db, 'users', user.uid);
+                        const userDoc = await getDoc(userDocRef);
+                        
+                        if (userDoc.exists() && userDoc.data().profilePicture) {
+                            // Create img element for profile picture
+                            avatarEl.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = userDoc.data().profilePicture;
+                            img.style.width = '100%';
+                            img.style.height = '100%';
+                            img.style.borderRadius = '50%';
+                            img.style.objectFit = 'cover';
+                            avatarEl.appendChild(img);
+                        } else {
+                            // Use initials if no profile picture
+                            const displayName = userDoc.exists() && userDoc.data().displayName 
+                                ? userDoc.data().displayName 
+                                : user.email;
+                            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                            avatarEl.textContent = initials;
+                        }
+                    } catch (error) {
+                        console.error('Error loading profile picture:', error);
+                        // Fallback to initials
+                        const initials = user.email.substring(0, 2).toUpperCase();
+                        avatarEl.textContent = initials;
+                    }
                 }
             }
         });

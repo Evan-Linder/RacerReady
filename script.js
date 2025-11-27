@@ -462,26 +462,95 @@
                     pointsStandingsSection.classList.add('active');
                     pointsStandingsSection.style.display = 'block';
                     
-                    // Populate form with current standings data
-                    const totalPointsInput = document.getElementById('total-points-input');
-                    const currentPositionInput = document.getElementById('current-position-input');
-                    const racesEnteredInput = document.getElementById('races-entered-input');
-                    const winsInput = document.getElementById('wins-input');
-                    const podiumsInput = document.getElementById('podiums-input');
-                    const standingsNotesInput = document.getElementById('standings-notes');
                     const titleElement = document.getElementById('points-standings-title');
-                    
-                    if (totalPointsInput) totalPointsInput.value = window.currentTrack.totalPoints || 0;
-                    if (currentPositionInput) currentPositionInput.value = window.currentTrack.currentPosition || '';
-                    if (racesEnteredInput) racesEnteredInput.value = window.currentTrack.racesEntered || 0;
-                    if (winsInput) winsInput.value = window.currentTrack.wins || 0;
-                    if (podiumsInput) podiumsInput.value = window.currentTrack.podiums || 0;
-                    if (standingsNotesInput) standingsNotesInput.value = window.currentTrack.standingsNotes || '';
                     if (titleElement) titleElement.textContent = `Points Standings - ${window.currentTrack.name}`;
+                    
+                    // Render the points standings
+                    await renderPointsStandings();
                 }
                 
                 const appContainer = document.querySelector('.app-container');
                 if (appContainer) appContainer.scrollTop = 0;
+            }
+            
+            async function renderPointsStandings() {
+                const standingsListDiv = document.getElementById('points-standings-list');
+                const totalPointsDisplay = document.getElementById('total-points-display');
+                
+                if (!standingsListDiv) return;
+                
+                if (!window.currentUser || !window.currentTrack) {
+                    standingsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">No track selected.</p>';
+                    return;
+                }
+                
+                standingsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Loading standings...</p>';
+                
+                try {
+                    // Query all days for this track with points
+                    const daysQuery = window.firebaseQuery(
+                        window.firebaseCollection(window.firebaseDb, 'days'),
+                        window.firebaseWhere('trackId', '==', window.currentTrack.id),
+                        window.firebaseWhere('userId', '==', window.currentUser.uid)
+                    );
+                    const daysSnapshot = await window.firebaseGetDocs(daysQuery);
+                    
+                    const races = [];
+                    let totalPoints = 0;
+                    
+                    daysSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (data.pointsEarned && data.pointsEarned > 0) {
+                            races.push({
+                                id: doc.id,
+                                raceName: data.raceName || 'Unnamed Race',
+                                pointsEarned: data.pointsEarned,
+                                timestamp: data.timestamp
+                            });
+                            totalPoints += data.pointsEarned;
+                        }
+                    });
+                    
+                    // Update total points display
+                    if (totalPointsDisplay) totalPointsDisplay.textContent = totalPoints;
+                    
+                    standingsListDiv.innerHTML = '';
+                    
+                    if (races.length === 0) {
+                        standingsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">No races with points recorded yet.</p>';
+                        return;
+                    }
+                    
+                    // Sort by date (most recent first)
+                    races.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    
+                    // Display each race
+                    races.forEach(race => {
+                        const card = document.createElement('div');
+                        card.className = 'instruction-card';
+                        card.style.textAlign = 'left';
+                        card.style.width = '100%';
+                        card.style.margin = '16px 0';
+                        card.style.background = 'rgba(230,238,246,0.05)';
+                        card.style.border = '1px solid rgba(230,238,246,0.15)';
+                        
+                        const date = race.timestamp ? new Date(race.timestamp).toLocaleDateString() : '';
+                        
+                        card.innerHTML = `
+                            <h3>${race.raceName}</h3>
+                            <p style="font-size: 1.1rem; color: rgba(51,255,153,0.9); margin-top: 8px;">
+                                <strong>Points Earned:</strong> ${race.pointsEarned}
+                            </p>
+                            <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6); margin-top: 8px;">
+                                ${date ? 'Date: ' + date : ''}
+                            </p>
+                        `;
+                        standingsListDiv.appendChild(card);
+                    });
+                } catch (error) {
+                    console.error('Error loading points standings:', error);
+                    standingsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Error loading standings.</p>';
+                }
             }
 
             // View day function
@@ -755,7 +824,8 @@
                         surfaceTemperature: document.getElementById('surface-temperature')?.value || '',
                         humidity: document.getElementById('humidity')?.value || '',
                         timeOfDay: document.getElementById('time-of-day')?.value || '',
-                        windConditions: document.getElementById('wind-conditions')?.value || ''
+                        windConditions: document.getElementById('wind-conditions')?.value || '',
+                        pointsEarned: parseInt(document.getElementById('points-earned')?.value) || 0
                     };
                     
                     // Save to Firebase
@@ -774,6 +844,7 @@
                             document.getElementById('humidity').value = '';
                             document.getElementById('time-of-day').value = '';
                             document.getElementById('wind-conditions').value = '';
+                            document.getElementById('points-earned').value = '';
                             
                             // Navigate back to track details
                             const dayEntrySection = document.querySelector('[data-section-content="day-entry"]');
@@ -887,51 +958,6 @@
                 });
             }
             
-            // Save Points Standings
-            const saveStandingsBtn = document.getElementById('save-standings-btn');
-            if (saveStandingsBtn) {
-                saveStandingsBtn.addEventListener('click', async function() {
-                    if (!window.currentTrack) {
-                        showAlert('No track selected.', 'Error', '❌');
-                        return;
-                    }
-                    
-                    const totalPoints = parseInt(document.getElementById('total-points-input')?.value) || 0;
-                    const currentPosition = parseInt(document.getElementById('current-position-input')?.value) || null;
-                    const racesEntered = parseInt(document.getElementById('races-entered-input')?.value) || 0;
-                    const wins = parseInt(document.getElementById('wins-input')?.value) || 0;
-                    const podiums = parseInt(document.getElementById('podiums-input')?.value) || 0;
-                    const standingsNotes = document.getElementById('standings-notes')?.value.trim() || '';
-                    
-                    try {
-                        await window.firebaseUpdateDoc(
-                            window.firebaseDoc(window.firebaseDb, 'tracks', window.currentTrack.id),
-                            { 
-                                totalPoints, 
-                                currentPosition, 
-                                racesEntered, 
-                                wins, 
-                                podiums, 
-                                standingsNotes 
-                            }
-                        );
-                        
-                        // Update current track object
-                        window.currentTrack.totalPoints = totalPoints;
-                        window.currentTrack.currentPosition = currentPosition;
-                        window.currentTrack.racesEntered = racesEntered;
-                        window.currentTrack.wins = wins;
-                        window.currentTrack.podiums = podiums;
-                        window.currentTrack.standingsNotes = standingsNotes;
-                        
-                        showAlert('Points standings saved successfully!', 'Saved', '✅');
-                    } catch (error) {
-                        console.error('Error saving standings:', error);
-                        showAlert('Error saving standings.', 'Error', '❌');
-                    }
-                });
-            }
-
             // Load tracks when track history section is activated
             window.addEventListener('loadTrackHistory', function() {
                 setTimeout(() => {
@@ -1006,6 +1032,10 @@
                     `;
                     tireSetListDiv.appendChild(card);
                 });
+                
+                // Reset scroll after rendering is complete
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
             }
 
             function openAddTireSetSection() {
@@ -1023,6 +1053,9 @@
                     if (tireModelInput) tireModelInput.value = '';
                     if (tireQuantityInput) tireQuantityInput.value = '4';
                 }
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
             }
 
             async function addTireSet() {
@@ -1115,6 +1148,8 @@
             window.addEventListener('loadTireHistory', function() {
                 setTimeout(() => {
                     renderTireSetList();
+                    const appContainer = document.querySelector('.app-container');
+                    if (appContainer) appContainer.scrollTop = 0;
                 }, 50);
             });
             
@@ -1139,6 +1174,9 @@
                     // Update set details info - condensed format
                     const setInfo = document.getElementById('tire-set-details-info');
                     if (setInfo) setInfo.innerHTML = `${tireSet.setName} | ${tireSet.brand} | Qty: ${tireSet.quantity}`;
+                    
+                    const appContainer = document.querySelector('.app-container');
+                    if (appContainer) appContainer.scrollTop = 0;
                     
                     // Render individual tires list
                     renderTiresList(setId);
@@ -1261,6 +1299,9 @@
                 if (setDetailsSection) setDetailsSection.classList.remove('active');
                 if (addTireSetSection) addTireSetSection.classList.remove('active');
                 if (tireHistorySection) tireHistorySection.classList.add('active');
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
             };
             
             // Add Tire Section Functions
@@ -2001,6 +2042,443 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = 'index.html';
             }
         });
+        
+        // Setup profile page functionality (will be called from profile.html after auth)
+        if (document.getElementById('profile-picture-input')) {
+            setupProfilePage();
+        }
+    }
+    
+    // Make setupProfilePage globally accessible
+    window.setupProfilePage = function setupProfilePage() {
+        // Check if we're on the profile page
+        const profilePictureInput = document.getElementById('profile-picture-input');
+        if (!profilePictureInput) return; // Not on profile page
+        
+        // View mode elements
+        const profileViewMode = document.getElementById('profile-view-mode');
+        const profileEditMode = document.getElementById('profile-edit-mode');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const backToViewBtn = document.getElementById('back-to-view-btn');
+        const viewProfilePicture = document.getElementById('view-profile-picture');
+        const viewProfileInitials = document.getElementById('view-profile-initials');
+        const viewDisplayName = document.getElementById('view-display-name');
+        const viewEmail = document.getElementById('view-email');
+        const viewDob = document.getElementById('view-dob');
+        const viewAge = document.getElementById('view-age');
+        const viewRacingTeam = document.getElementById('view-racing-team');
+        const viewKartNumber = document.getElementById('view-kart-number');
+        const viewRacingClass = document.getElementById('view-racing-class');
+        
+        // Edit mode elements
+        const profilePicturePreview = document.getElementById('profile-picture-preview');
+        const profileInitials = document.getElementById('profile-initials');
+        const removePictureBtn = document.getElementById('remove-picture-btn');
+        const displayNameInput = document.getElementById('display-name-input');
+        const dobInput = document.getElementById('dob-input');
+        const ageDisplay = document.getElementById('age-display');
+        const racingTeamInput = document.getElementById('racing-team-input');
+        const kartNumberInput = document.getElementById('kart-number-input');
+        const racingClassInput = document.getElementById('racing-class-input');
+        const savePersonalInfoBtn = document.getElementById('save-personal-info-btn');
+        const currentEmailDisplay = document.getElementById('current-email-display');
+        const emailCurrentPassword = document.getElementById('email-current-password');
+        const newEmailInput = document.getElementById('new-email-input');
+        const changeEmailBtn = document.getElementById('change-email-btn');
+        const passwordCurrentPassword = document.getElementById('password-current-password');
+        const newPasswordInput = document.getElementById('new-password-input');
+        const confirmNewPasswordInput = document.getElementById('confirm-new-password-input');
+        const changePasswordBtn = document.getElementById('change-password-btn');
+        
+        // Toggle between view and edit modes
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', function() {
+                profileViewMode.style.display = 'none';
+                profileEditMode.style.display = 'block';
+            });
+        }
+        
+        if (backToViewBtn) {
+            backToViewBtn.addEventListener('click', function() {
+                profileEditMode.style.display = 'none';
+                profileViewMode.style.display = 'block';
+                loadProfileData(); // Refresh view mode data
+            });
+        }
+        
+        // Load user profile data
+        async function loadProfileData() {
+            if (!window.currentUser) return;
+            
+            // Display current email
+            if (currentEmailDisplay) {
+                currentEmailDisplay.textContent = window.currentUser.email;
+            }
+            
+            // Load profile data from Firestore
+            try {
+                const userDocRef = window.firebaseDoc(window.firebaseDb, 'users', window.currentUser.uid);
+                const userDoc = await window.firebaseGetDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    
+                    // Populate edit mode
+                    if (displayNameInput) displayNameInput.value = data.displayName || '';
+                    if (dobInput) dobInput.value = data.dob || '';
+                    if (racingTeamInput) racingTeamInput.value = data.racingTeam || '';
+                    if (kartNumberInput) kartNumberInput.value = data.kartNumber || '';
+                    if (racingClassInput) racingClassInput.value = data.racingClass || '';
+                    
+                    // Populate view mode
+                    if (viewDisplayName) viewDisplayName.textContent = data.displayName || 'No Name Set';
+                    if (viewEmail) viewEmail.textContent = window.currentUser.email;
+                    if (viewDob) viewDob.textContent = data.dob ? new Date(data.dob).toLocaleDateString() : 'Not set';
+                    if (viewRacingTeam) viewRacingTeam.textContent = data.racingTeam || 'Not set';
+                    if (viewKartNumber) viewKartNumber.textContent = data.kartNumber || 'Not set';
+                    if (viewRacingClass) viewRacingClass.textContent = data.racingClass || 'Not set';
+                    
+                    // Calculate and display age in view mode
+                    if (data.dob) {
+                        const birthDate = new Date(data.dob);
+                        const today = new Date();
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        const monthDiff = today.getMonth() - birthDate.getMonth();
+                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                        }
+                        if (viewAge) viewAge.textContent = `${age} years old`;
+                        if (ageDisplay) ageDisplay.textContent = `Age: ${age} years old`;
+                    } else {
+                        if (viewAge) viewAge.textContent = 'Not set';
+                    }
+                    
+                    // Update profile picture in both modes
+                    if (data.profilePicture) {
+                        // Edit mode
+                        if (profilePicturePreview) {
+                            profilePicturePreview.src = data.profilePicture;
+                            profilePicturePreview.style.display = 'block';
+                        }
+                        if (profileInitials) {
+                            profileInitials.style.display = 'none';
+                        }
+                        // View mode
+                        if (viewProfilePicture) {
+                            viewProfilePicture.src = data.profilePicture;
+                            viewProfilePicture.style.display = 'block';
+                        }
+                        if (viewProfileInitials) {
+                            viewProfileInitials.style.display = 'none';
+                        }
+                    } else {
+                        updateInitials(data.displayName || window.currentUser.email);
+                        updateViewInitials(data.displayName || window.currentUser.email);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        function updateInitials(name) {
+            if (!profileInitials) return;
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            profileInitials.textContent = initials;
+            profileInitials.style.display = 'flex';
+            if (profilePicturePreview) profilePicturePreview.style.display = 'none';
+        }
+        
+        function updateViewInitials(name) {
+            if (!viewProfileInitials) return;
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            viewProfileInitials.textContent = initials;
+            viewProfileInitials.style.display = 'flex';
+            if (viewProfilePicture) viewProfilePicture.style.display = 'none';
+        }
+        
+        function updateHeaderAvatar(imageUrl) {
+            const avatarEl = document.querySelector('.avatar');
+            if (!avatarEl) return;
+            
+            avatarEl.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.borderRadius = '50%';
+            img.style.objectFit = 'cover';
+            avatarEl.appendChild(img);
+        }
+        
+        function calculateAge(dob) {
+            if (!dob || !ageDisplay) return;
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            ageDisplay.textContent = `Age: ${age} years old`;
+        }
+        
+        // Handle profile picture upload
+        if (profilePictureInput) {
+            profilePictureInput.addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Validate file type
+                const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    showAlert('Please select a valid image file (PNG, JPG, JPEG, GIF, or WEBP)', 'Invalid File', '⚠️');
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size must be less than 5MB');
+                    return;
+                }
+                
+                // Resize and compress image to fit Firestore limits
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = async function() {
+                        // Create canvas to resize image
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Resize to max 200x200 to keep file size small
+                        const maxSize = 200;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height *= maxSize / width;
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width *= maxSize / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to base64 with compression
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        try {
+                            const userDocRef = window.firebaseDoc(window.firebaseDb, 'users', window.currentUser.uid);
+                            await window.firebaseSetDoc(userDocRef, {
+                                profilePicture: compressedBase64,
+                                userId: window.currentUser.uid
+                            }, { merge: true });
+                            
+                            if (profilePicturePreview) {
+                                profilePicturePreview.src = compressedBase64;
+                                profilePicturePreview.style.display = 'block';
+                            }
+                            if (profileInitials) {
+                                profileInitials.style.display = 'none';
+                            }
+                            
+                            // Update header avatar
+                            updateHeaderAvatar(compressedBase64);
+                        } catch (error) {
+                            console.error('Error uploading picture:', error);
+                            alert('Error uploading picture: ' + error.message);
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Handle remove picture
+        if (removePictureBtn) {
+            removePictureBtn.addEventListener('click', async function() {
+                if (!confirm('Remove profile picture?')) return;
+                
+                try {
+                    const userDocRef = window.firebaseDoc(window.firebaseDb, 'users', window.currentUser.uid);
+                    await window.firebaseSetDoc(userDocRef, {
+                        profilePicture: '',
+                        userId: window.currentUser.uid
+                    }, { merge: true });
+                    
+                    if (profilePicturePreview) {
+                        profilePicturePreview.style.display = 'none';
+                    }
+                    updateInitials(displayNameInput.value || window.currentUser.email);
+                    
+                    // Update header avatar to show initials
+                    const avatarEl = document.querySelector('.avatar');
+                    if (avatarEl) {
+                        const displayName = displayNameInput.value || window.currentUser.email;
+                        const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                        avatarEl.innerHTML = '';
+                        avatarEl.textContent = initials;
+                    }
+                } catch (error) {
+                    console.error('Error removing picture:', error);
+                    alert('Error removing picture: ' + error.message);
+                }
+            });
+        }
+        
+        // Calculate age when DOB changes
+        if (dobInput) {
+            dobInput.addEventListener('change', function() {
+                calculateAge(this.value);
+            });
+        }
+        
+        // Save personal information
+        if (savePersonalInfoBtn) {
+            savePersonalInfoBtn.addEventListener('click', async function() {
+                if (!window.currentUser) return;
+                
+                try {
+                    const userDocRef = window.firebaseDoc(window.firebaseDb, 'users', window.currentUser.uid);
+                    await window.firebaseSetDoc(userDocRef, {
+                        displayName: displayNameInput.value.trim(),
+                        dob: dobInput.value,
+                        racingTeam: racingTeamInput.value.trim(),
+                        kartNumber: kartNumberInput.value.trim(),
+                        racingClass: racingClassInput.value.trim(),
+                        userId: window.currentUser.uid
+                    }, { merge: true });
+                    
+                    // Update initials if no profile picture
+                    if (!profilePicturePreview.src || profilePicturePreview.style.display === 'none') {
+                        updateInitials(displayNameInput.value || window.currentUser.email);
+                        updateViewInitials(displayNameInput.value || window.currentUser.email);
+                    }
+                    
+                    // Update view mode with new data
+                    await loadProfileData();
+                } catch (error) {
+                    console.error('Error saving personal info:', error);
+                    alert('Error saving information: ' + error.message);
+                }
+            });
+        }
+        
+        // Change email
+        if (changeEmailBtn) {
+            changeEmailBtn.addEventListener('click', async function() {
+                const currentPassword = emailCurrentPassword.value.trim();
+                const newEmail = newEmailInput.value.trim();
+                
+                if (!currentPassword) {
+                    showAlert('Please enter your current password', 'Password Required', '⚠️');
+                    return;
+                }
+                
+                if (!newEmail) {
+                    showAlert('Please enter a new email address', 'Email Required', '⚠️');
+                    return;
+                }
+                
+                if (!newEmail.includes('@')) {
+                    showAlert('Please enter a valid email address', 'Invalid Email', '⚠️');
+                    return;
+                }
+                
+                try {
+                    // Reauthenticate user
+                    const credential = window.firebaseEmailAuthProvider.credential(
+                        window.currentUser.email,
+                        currentPassword
+                    );
+                    await window.firebaseReauthenticateWithCredential(window.currentUser, credential);
+                    
+                    // Update email
+                    await window.firebaseUpdateEmail(window.currentUser, newEmail);
+                    
+                    emailCurrentPassword.value = '';
+                    newEmailInput.value = '';
+                    currentEmailDisplay.textContent = newEmail;
+                    
+                    showAlert('Email changed successfully! Please verify your new email.', 'Success', '✅');
+                } catch (error) {
+                    console.error('Error changing email:', error);
+                    if (error.code === 'auth/wrong-password') {
+                        showAlert('Current password is incorrect', 'Error', '❌');
+                    } else if (error.code === 'auth/email-already-in-use') {
+                        showAlert('This email is already in use', 'Error', '❌');
+                    } else {
+                        showAlert('Error changing email: ' + error.message, 'Error', '❌');
+                    }
+                }
+            });
+        }
+        
+        // Change password
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', async function() {
+                const currentPassword = passwordCurrentPassword.value.trim();
+                const newPassword = newPasswordInput.value.trim();
+                const confirmPassword = confirmNewPasswordInput.value.trim();
+                
+                if (!currentPassword) {
+                    showAlert('Please enter your current password', 'Password Required', '⚠️');
+                    return;
+                }
+                
+                if (!newPassword) {
+                    showAlert('Please enter a new password', 'Password Required', '⚠️');
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    showAlert('New password must be at least 6 characters', 'Password Too Short', '⚠️');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    showAlert('New passwords do not match', 'Passwords Mismatch', '⚠️');
+                    return;
+                }
+                
+                try {
+                    // Reauthenticate user
+                    const credential = window.firebaseEmailAuthProvider.credential(
+                        window.currentUser.email,
+                        currentPassword
+                    );
+                    await window.firebaseReauthenticateWithCredential(window.currentUser, credential);
+                    
+                    // Update password
+                    await window.firebaseUpdatePassword(window.currentUser, newPassword);
+                    
+                    passwordCurrentPassword.value = '';
+                    newPasswordInput.value = '';
+                    confirmNewPasswordInput.value = '';
+                    
+                    showAlert('Password changed successfully!', 'Success', '✅');
+                } catch (error) {
+                    console.error('Error changing password:', error);
+                    if (error.code === 'auth/wrong-password') {
+                        showAlert('Current password is incorrect', 'Error', '❌');
+                    } else {
+                        showAlert('Error changing password: ' + error.message, 'Error', '❌');
+                    }
+                }
+            });
+        }
+        
+        // Load profile data on page load
+        loadProfileData();
     }
 
     // Build section flow: show choice menu -> category menu -> setup interface
@@ -2322,6 +2800,8 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (!builds || builds.length === 0) {
             buildsListDiv.innerHTML = '<p>No saved builds yet. Create and save a build to see it here!</p>';
+            const appContainer = document.querySelector('.app-container');
+            if (appContainer) appContainer.scrollTop = 0;
             return;
         }
 
@@ -2345,6 +2825,10 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
             buildsListDiv.appendChild(buildCard);
         });
+        
+        // Reset scroll after all content is rendered
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer) appContainer.scrollTop = 0;
     }
 
     async function deleteBuildAndRefresh(buildId) {
