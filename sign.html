@@ -33,34 +33,36 @@
             </div>
 
             <div class="auth-panels">
-                <form id="panel-signin" class="auth-panel" autocomplete="on">
+                <form id="panel-signin" class="auth-panel" autocomplete="on" novalidate>
                     <label for="si-email">Email</label>
-                    <input id="si-email" name="email" type="email" placeholder="you@example.com" required />
+                    <input id="si-email" name="email" type="email" placeholder="you@example.com" />
 
                     <label for="si-pass">Password</label>
-                    <input id="si-pass" name="password" type="password" placeholder="••••••••" required />
+                    <input id="si-pass" name="password" type="password" placeholder="••••••••" />
 
                     <div class="form-row">
                         <button type="submit" class="btn primary">Sign in</button>
                         <a class="btn" href="#">Forgot?</a>
+                        <span id="signin-error" style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
                     </div>
                 </form>
 
-                <form id="panel-create" class="auth-panel hidden" autocomplete="on">
+                <form id="panel-create" class="auth-panel hidden" autocomplete="on" novalidate>
                     <label for="ca-name">Full name</label>
-                    <input id="ca-name" name="name" type="text" placeholder="Your name" required />
+                    <input id="ca-name" name="name" type="text" placeholder="Your name" />
 
                     <label for="ca-email">Email</label>
-                    <input id="ca-email" name="email" type="email" placeholder="you@example.com" required />
+                    <input id="ca-email" name="email" type="email" placeholder="you@example.com" />
 
                     <label for="ca-pass">Password</label>
-                    <input id="ca-pass" name="password" type="password" placeholder="Create a password" required />
+                    <input id="ca-pass" name="password" type="password" placeholder="Create a password" />
 
                     <label for="ca-pass2">Confirm password</label>
-                    <input id="ca-pass2" name="password2" type="password" placeholder="Confirm password" required />
+                    <input id="ca-pass2" name="password2" type="password" placeholder="Confirm password" />
 
                     <div class="form-row">
                         <button type="submit" class="btn primary">Create account</button>
+                        <span id="create-error" style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
                     </div>
                 </form>
             </div>
@@ -71,6 +73,163 @@
         <small>&copy; 2025 Racer Ready</small>
     </footer>
 
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi_oZtWxAvLa3aKeb_u1L_Gg31Bbf9u-A",
+            authDomain: "racerready-a70d1.firebaseapp.com",
+            projectId: "racerready-a70d1",
+            storageBucket: "racerready-a70d1.firebasestorage.app",
+            messagingSenderId: "101209144078",
+            appId: "1:101209144078:web:133e745dd019211e63f55f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, redirect to app
+                window.location.href = 'app.html';
+            }
+        });
+
+        // Sign In Form
+        const signInForm = document.getElementById('panel-signin');
+        const signinError = document.getElementById('signin-error');
+        signInForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('si-email').value.trim();
+            const password = document.getElementById('si-pass').value;
+            
+            // Hide any previous errors
+            signinError.style.display = 'none';
+            
+            // Validate fields
+            if (!email || !password) {
+                signinError.textContent = 'Please fill in all fields';
+                signinError.style.display = 'inline';
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // Will redirect via onAuthStateChanged
+            } catch (error) {
+                console.error('Login error:', error);
+                let message = 'Login failed. Please try again.';
+                if (error.code === 'auth/invalid-credential') {
+                    message = 'Invalid email or password';
+                } else if (error.code === 'auth/user-not-found') {
+                    message = 'No account found with this email';
+                } else if (error.code === 'auth/wrong-password') {
+                    message = 'Incorrect password';
+                } else if (error.code === 'auth/too-many-requests') {
+                    message = 'Too many failed attempts. Please try again later.';
+                }
+                signinError.textContent = message;
+                signinError.style.display = 'inline';
+            }
+        });
+
+        // Create Account Form
+        const createForm = document.getElementById('panel-create');
+        const createError = document.getElementById('create-error');
+        createForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('ca-email').value.trim();
+            const password = document.getElementById('ca-pass').value;
+            const password2 = document.getElementById('ca-pass2').value;
+            
+            // Hide any previous errors
+            createError.style.display = 'none';
+            
+            // Validate fields
+            if (!email || !password || !password2) {
+                createError.textContent = 'Please fill in all fields';
+                createError.style.display = 'inline';
+                return;
+            }
+
+            if (password !== password2) {
+                createError.textContent = 'Passwords do not match';
+                createError.style.display = 'inline';
+                return;
+            }
+
+            if (password.length < 6) {
+                createError.textContent = 'Password must be at least 6 characters';
+                createError.style.display = 'inline';
+                return;
+            }
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                // Sign out immediately and show success message
+                await auth.signOut();
+                createError.textContent = 'Account created! Please sign in.';
+                createError.style.color = '#33ff33';
+                createError.style.display = 'inline';
+                // Switch to sign-in tab after a brief delay
+                setTimeout(() => {
+                    tabSignin.click();
+                    createError.style.display = 'none';
+                    createError.style.color = '#ff3333';
+                }, 1500);
+            } catch (error) {
+                console.error('Signup error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                let message = 'Signup failed. Please try again.';
+                if (error.code === 'auth/email-already-in-use') {
+                    message = 'An account with this email already exists';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Invalid email address';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'Password is too weak';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    message = 'Email/password accounts are not enabled';
+                } else if (error.code === 'auth/network-request-failed') {
+                    message = 'Network error. Check your connection';
+                } else {
+                    message = `Error: ${error.message}`;
+                }
+                createError.textContent = message;
+                createError.style.display = 'inline';
+            }
+        });
+
+        // Tab switching
+        const tabSignin = document.getElementById('tab-signin');
+        const tabCreate = document.getElementById('tab-create');
+        const panelSignin = document.getElementById('panel-signin');
+        const panelCreate = document.getElementById('panel-create');
+
+        tabSignin.addEventListener('click', () => {
+            tabSignin.classList.add('active');
+            tabCreate.classList.remove('active');
+            panelSignin.classList.remove('hidden');
+            panelCreate.classList.add('hidden');
+            // Clear errors when switching tabs
+            signinError.style.display = 'none';
+            createError.style.display = 'none';
+        });
+
+        tabCreate.addEventListener('click', () => {
+            tabCreate.classList.add('active');
+            tabSignin.classList.remove('active');
+            panelCreate.classList.remove('hidden');
+            panelSignin.classList.add('hidden');
+            // Clear errors when switching tabs
+            signinError.style.display = 'none';
+            createError.style.display = 'none';
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 

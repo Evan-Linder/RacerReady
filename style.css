@@ -1,3 +1,68 @@
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(7,16,33,0.96);
+    z-index: 20000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+.modal-overlay .modal-content {
+    margin-top: 160px;
+}
+.modal-content {
+    background: linear-gradient(135deg, rgba(255,51,51,0.08), rgba(204,0,0,0.05));
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(2,6,23,0.55);
+    padding: 0;
+    min-width: 320px;
+    max-width: 95vw;
+    width: 100%;
+    max-width: 400px;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 10px 24px;
+    background: transparent;
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #ff3333;
+    font-weight: 700;
+}
+.modal-close {
+    background: none;
+    border: none;
+    color: #e6eef6;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    transition: background 0.15s;
+}
+.modal-close:hover {
+    background: rgba(255,255,255,0.08);
+}
+.modal-body {
+    padding: 12px 24px 18px 24px;
+    background: transparent;
+}
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px 24px 18px 24px;
+    background: transparent;
+}
 /* Basic reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
@@ -226,11 +291,11 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
 }
 
 /* Profile avatar and dropdown */
-.profile-menu { display: inline-flex; position: relative; align-items: center; }
+.profile-menu { display: inline-flex; position: relative; align-items: flex-start; margin-right: 20px; padding-bottom: 20px; }
 .profile-menu.hidden { display: none; }
-.profile-btn { background: transparent; border: none; cursor: pointer; padding: 0; }
+.profile-btn {  background: transparent; border: none; cursor: pointer; padding: 0; }
 .avatar { display:inline-block; width:36px; height:36px; border-radius:50%; background: linear-gradient(180deg,var(--accent),var(--accent-2)); color: #fff; display:flex; align-items:center; justify-content:center; font-weight:700; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
-.profile-dropdown { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); color: var(--text); min-width: 160px; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap:8px; box-shadow: 0 14px 30px rgba(0,0,0,0.6); z-index: 10100; }
+.profile-dropdown { position: absolute; top: calc(100% - 12px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); color: var(--text); min-width: 50px; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap:8px; box-shadow: 0 14px 30px rgba(0,0,0,0.6); z-index: 10100; }
 .profile-dropdown a, .profile-dropdown button { color: var(--text); text-decoration: none; background: transparent; border: none; text-align: left; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
 .profile-dropdown a:hover, .profile-dropdown button:hover { background: rgba(255,255,255,0.03); }
 .profile-dropdown.hidden { display: none; }
@@ -675,6 +740,13 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
     font-size: 0.9rem;
     font-family: inherit;
     transition: all 0.3s ease;
+    appearance: auto;
+}
+
+.setup-input option {
+    background: #1a2332;
+    color: #e6eef6;
+    padding: 8px;
 }
 
 .setup-input:focus {
@@ -831,4 +903,3 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
         font-size: 1.3rem;
         margin: 4px 0;
     }
-}

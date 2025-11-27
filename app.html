@@ -36,9 +36,9 @@
     <aside class="side-panel" aria-label="Actions">
         <nav class="side-nav">
             <button class="side-btn primary" data-section="home">Home</button>
-            <button class="side-btn accent" data-section="start">Start</button>
-            <button class="side-btn outline" data-section="build">Build/Tuning</button>
-            <button class="side-btn ghost" data-section="logs">Logs</button>
+            <button class="side-btn outline" data-section="build">Start Building</button>
+            <button class="side-btn info" data-section="track-history">Track History</button>
+            <button class="side-btn info" data-section="tire-history">Tire History</button>
             <button class="side-btn danger" data-section="saved">Saved Builds</button>
         </nav>
     </aside>
@@ -54,20 +54,20 @@
         <!-- Default instructions view -->
         <div class="app-section active" data-section-content="home">
             <div class="app-instructions">
-                <div class="instruction-card" data-card="start">
-                    <div class="instruction-icon">▶</div>
-                    <h3>Start</h3>
-                    <p>Begin your racing journey and launch into action</p>
-                </div>
                 <div class="instruction-card" data-card="build">
                     <div class="instruction-icon">⚙</div>
-                    <h3>Build/Tuning</h3>
+                    <h3>Start Building</h3>
                     <p>Create, customize, and fine-tune your kart configuration</p>
                 </div>
-                <div class="instruction-card" data-card="logs">
-                    <div class="instruction-icon">📊</div>
-                    <h3>Logs</h3>
-                    <p>Review your race history and performance analytics</p>
+                <div class="instruction-card" data-card="track-history">
+                    <div class="instruction-icon">🏁</div>
+                    <h3>Track History</h3>
+                    <p>View and manage your track history records</p>
+                </div>
+                <div class="instruction-card" data-card="tire-history">
+                    <div class="instruction-icon">🛞</div>
+                    <h3>Tire History</h3>
+                    <p>View and manage your tire usage and history</p>
                 </div>
                 <div class="instruction-card" data-card="saved">
                     <div class="instruction-icon">⭐</div>
@@ -77,58 +77,49 @@
             </div>
         </div>
 
-        <!-- Start Section -->
-        <div class="app-section" data-section-content="start">
-            <h2>Are you Ready?</h2>
-            <p>How would you like to begin?</p>
-            <div class="section-content">
-                <!-- Choice Menu (Initial) -->
-                <div class="choice-buttons" id="start-choice-menu">
-                    <button class="choice-btn" data-action="load-saved">
-                        <span class="choice-icon">📂</span>
-                        <span class="choice-label">Load from Saved Build</span>
-                    </button>
-                    <button class="choice-btn" data-action="create-new">
-                        <span class="choice-icon">✨</span>
-                        <span class="choice-label">Create New Build</span>
-                    </button>
-                </div>
-
-                <!-- Settings Menu (Hidden initially) -->
-                <div class="settings-menu" id="start-settings-menu" style="display: none;">
-                    <div class="settings-header">
-                        <button class="back-btn" id="back-to-choice">&larr; Back</button>
-                        <h3 id="settings-title">Select Settings</h3>
-                    </div>
-                    <div class="settings-options">
-                        <button class="settings-btn" data-settings="tire">
-                            <span class="settings-icon">🛞</span>
-                            <span class="settings-label">Tire Settings</span>
-                            <span class="settings-desc">Adjust pressure, compound, and stagger</span>
-                        </button>
-                        <button class="settings-btn" data-settings="kart">
-                            <span class="settings-icon">🏎️</span>
-                            <span class="settings-label">Kart Settings</span>
-                            <span class="settings-desc">Chassis, weight, alignment, and drivetrain</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Build Section -->
         <div class="app-section" data-section-content="build">
             <h2>Build & Tune Your Kart</h2>
             <p>Customize every aspect of your kart's performance</p>
             <div class="section-content">
+                <!-- Choice Menu for Build Section (Initial) -->
+                <div class="choice-buttons" id="build-choice-menu">
+                    <button class="choice-btn" data-action="load-saved-build">
+                        <span class="choice-icon">📂</span>
+                        <span class="choice-label">Load from Saved Build</span>
+                    </button>
+                    <button class="choice-btn" data-action="create-new-build">
+                        <span class="choice-icon">✨</span>
+                        <span class="choice-label">Create New Build</span>
+                    </button>
+                </div>
+
+                <!-- Category Selection Menu (Hidden initially) -->
+                <div class="choice-buttons" id="build-category-menu" style="display: none;">
+                    <button class="choice-btn" data-category="kart">
+                        <span class="choice-icon">🏎️</span>
+                        <span class="choice-label">Kart Adjustments</span>
+                    </button>
+                    <button class="choice-btn" data-category="tire">
+                        <span class="choice-icon">🛞</span>
+                        <span class="choice-label">Tire Adjustments</span>
+                    </button>
+                </div>
+
+                <!-- Build Setup Interface (Hidden initially) -->
+                <div id="build-setup-interface" style="display: none;">
+                <div class="settings-header">
+                    <button class="back-btn" id="back-to-category">&larr; Back</button>
+                    <h3 id="build-category-title">Adjustments</h3>
+                    <button class="btn primary" onclick="saveBuild()" style="margin-left: auto;">💾 Save Build</button>
+                </div>
                 <div class="setup-tabs">
-                    <button class="setup-tab active" data-setup="frontend">Front End</button>
-                    <button class="setup-tab" data-setup="backend">Rear End</button>
-                    <button class="setup-tab" data-setup="weight">Weight & Balance</button>
-                    <button class="setup-tab" data-setup="chassis">Chassis</button>
-                    <button class="setup-tab" data-setup="tires">Tires</button>
-                    <button class="setup-tab" data-setup="drivetrain">Drivetrain</button>
-                    <button class="setup-tab" data-setup="brakes">Brakes</button>
+                    <button class="setup-tab active" data-setup="frontend" data-category="kart">Front End</button>
+                    <button class="setup-tab" data-setup="backend" data-category="kart">Rear End</button>
+                    <button class="setup-tab" data-setup="weight" data-category="kart">Weight & Balance</button>
+                    <button class="setup-tab" data-setup="chassis" data-category="kart">Chassis</button>
+                    <button class="setup-tab" data-setup="tires" data-category="tire">Tires</button>
+                    <button class="setup-tab" data-setup="drivetrain" data-category="kart">Drivetrain</button>
                 </div>
 
                 <div class="setup-content">
@@ -137,65 +128,29 @@
                         <h3>Front End Setup</h3>
                         <ul class="setup-list">
                             <li>
-                                <strong>Caster:</strong> The angle of the kingpin relative to the ground when viewed
-                                from the side.
-                                <ul class="sub-info">
-                                    <li>Increased Caster: Increases front-end grip and jacking effect throughout the
-                                        corner (more aggressive turn-in).</li>
-                                    <li>Decreased Caster: Decreases front-end grip.</li>
-                                </ul>
+                                <strong>Caster:</strong>
                                 <input type="number" placeholder="Typical: 3-8°" class="setup-input" min="-10" max="10">
                             </li>
                             <li>
-                                <strong>Camber:</strong> The angle of the wheel relative to the vertical axis when
-                                viewed from the front.
-                                <ul class="sub-info">
-                                    <li>Negative Camber: Top of tire leans in; can improve turn-in but may reduce
-                                        mid-corner grip.</li>
-                                    <li>Positive Camber: Top of tire leans out; often used on right front to maximize
-                                        contact patch under cornering load.</li>
-                                </ul>
+                                <strong>Camber:</strong>
                                 <input type="number" placeholder="Typical: -2 to 2°" class="setup-input" min="-5"
                                     max="5">
                             </li>
                             <li>
-                                <strong>Toe:</strong> The angle of the front wheels relative to each other (parallel,
-                                pointing in, or pointing out).
-                                <ul class="sub-info">
-                                    <li>Toe Out: Wheels point slightly outward; increases responsiveness and turn-in
-                                        (most common).</li>
-                                    <li>Toe In: Wheels point slightly inward; rarely used.</li>
-                                </ul>
+                                <strong>Toe:</strong>
                                 <input type="text" placeholder="e.g., 0-3mm toe-out" class="setup-input">
                             </li>
                             <li>
-                                <strong>Ackermann Steering Geometry:</strong> The relationship between the steering
-                                angles of the inside and outside front wheels.
-                                <ul class="sub-info">
-                                    <li>Increased Ackermann: Inside wheel turns more than outside; generally for
-                                        tighter, slower corners.</li>
-                                    <li>Decreased Ackermann: Inside and outside wheels turn similarly; generally for
-                                        faster, sweeping corners.</li>
-                                </ul>
+                                <strong>Ackermann Steering Geometry:</strong>
                                 <input type="number" placeholder="Typical: 1-3°" class="setup-input" min="0" max="10">
                             </li>
                             <li>
-                                <strong>Front Ride Height:</strong> Adjusted by moving spacers on the spindles.
-                                <ul class="sub-info">
-                                    <li>Raising Front Ride Height (Lowering Spindles): Increases front-end grip (more
-                                        weight transfer).</li>
-                                    <li>Lowering Front Ride Height (Raising Spindles): Decreases front-end grip.</li>
-                                </ul>
+                                <strong>Front Ride Height:</strong>
                                 <input type="number" placeholder="Typical: 10-30mm" class="setup-input" min="0"
                                     max="50">
                             </li>
                             <li>
-                                <strong>Front Track Width:</strong> Adjusted by moving spacers on the spindles.
-                                <ul class="sub-info">
-                                    <li>Wider Front Track: Increases front-end bite/grip and responsiveness (good for a
-                                        "tight" kart).</li>
-                                    <li>Narrower Front Track: Decreases front-end bite (good for a "loose" kart).</li>
-                                </ul>
+                                <strong>Front Track Width:</strong>
                                 <input type="number" placeholder="Typical: 130-160mm" class="setup-input" min="120"
                                     max="170">
                             </li>
@@ -207,44 +162,21 @@
                         <h3>Rear End Setup</h3>
                         <ul class="setup-list">
                             <li>
-                                <strong>Rear Track Width:</strong> Adjusted by moving rear hubs or spacers on the axle.
-                                <ul class="sub-info">
-                                    <li>Narrower Rear Track: Increases weight transfer and lift of inside-rear wheel
-                                        (more "jacks" the kart, increasing rotation/bite).</li>
-                                    <li>Wider Rear Track: Decreases rear grip and rotation (good for a kart that is too
-                                        "loose" or "free").</li>
-                                </ul>
+                                <strong>Rear Track Width:</strong>
                                 <input type="number" placeholder="Typical: 140-170mm" class="setup-input" min="130"
                                     max="180">
                             </li>
                             <li>
-                                <strong>Rear Axle Height:</strong> Adjusted by moving bearing hangers.
-                                <ul class="sub-info">
-                                    <li>Raising Rear Ride Height: Increases weight transfer and rear grip/rotation (more
-                                        jacking).</li>
-                                    <li>Lowering Rear Ride Height: Decreases weight transfer and rear grip.</li>
-                                </ul>
+                                <strong>Rear Axle Height:</strong>
                                 <input type="number" placeholder="Typical: 10-30mm" class="setup-input" min="0"
                                     max="50">
                             </li>
                             <li>
-                                <strong>Rear Axle Hardness:</strong> Axles come in different materials/thicknesses
-                                (soft, medium, hard).
-                                <ul class="sub-info">
-                                    <li>Harder Axle: Reduces flex, providing more stability and freeing up the kart.
-                                    </li>
-                                    <li>Softer Axle: Increases flex, increasing rear grip and rotation.</li>
-                                </ul>
+                                <strong>Rear Axle Hardness:</strong>
                                 <input type="text" placeholder="e.g., Soft/Medium/Hard" class="setup-input">
                             </li>
                             <li>
-                                <strong>Torsion Bars/Stiffeners (Rear):</strong> Inserting or removing bars.
-                                <ul class="sub-info">
-                                    <li>Installing/Stiffening: Increases chassis rigidity (useful on high-grip tracks
-                                        but can cause understeer if too stiff).</li>
-                                    <li>Removing/Loosening: Increases chassis flex, increasing grip on low-grip or bumpy
-                                        surfaces.</li>
-                                </ul>
+                                <strong>Torsion Bars/Stiffeners (Rear):</strong>
                                 <input type="text" placeholder="e.g., Installed/Removed" class="setup-input">
                             </li>
                         </ul>
@@ -255,49 +187,22 @@
                         <h3>Weight & Balance</h3>
                         <ul class="setup-list">
                             <li>
-                                <strong>Nose Weight Percentage:</strong> The percentage of total weight on the front
-                                axle.
-                                <ul class="sub-info">
-                                    <li>Increase Nose Weight: Increases front-end grip/bite.</li>
-                                    <li>Decrease Nose Weight: Decreases front-end grip/bite.</li>
-                                </ul>
+                                <strong>Nose Weight Percentage:</strong>
                                 <input type="number" placeholder="Typical: 35-50%" class="setup-input" min="0"
                                     max="100">
                             </li>
                             <li>
-                                <strong>Left Side Weight Percentage:</strong> The percentage of total weight on the left
-                                side.
-                                <ul class="sub-info">
-                                    <li>Increase Left Side Weight: Shifts weight to the left (crucial for turning left
-                                        on an oval). Increases left-side load and overall side bite.</li>
-                                </ul>
+                                <strong>Left Side Weight Percentage:</strong>
                                 <input type="number" placeholder="Typical: 45-55%" class="setup-input" min="0"
                                     max="100">
                             </li>
                             <li>
-                                <strong>Cross Weight Percentage (Bite):</strong> The diagonal weight distribution
-                                (Right-Front + Left-Rear vs. total weight).
-                                <ul class="sub-info">
-                                    <li>Increase Cross Weight: Generally increases lift on inside-rear tire and makes
-                                        kart tighter (less prone to sliding).</li>
-                                    <li>Decrease Cross Weight: Makes the kart looser (more prone to sliding) and easier
-                                        to steer.</li>
-                                </ul>
+                                <strong>Cross Weight Percentage (Bite):</strong>
                                 <input type="number" placeholder="Typical: 45-55%" class="setup-input" min="0"
                                     max="100">
                             </li>
                             <li>
-                                <strong>Driver/Seat Position:</strong> Adjusting seat forward/backward and vertical
-                                height.
-                                <ul class="sub-info">
-                                    <li>Moving Seat Forward: Increases nose weight percentage, adding front grip.</li>
-                                    <li>Moving Seat Backward: Decreases nose weight percentage, adding rear
-                                        grip/traction.</li>
-                                    <li>Raising Seat (Higher CG): Increases weight transfer, which can add grip in
-                                        low-grip conditions.</li>
-                                    <li>Lowering Seat (Lower CG): Reduces weight transfer, making the kart more stable.
-                                    </li>
-                                </ul>
+                                <strong>Driver/Seat Position:</strong>
                                 <input type="text" placeholder="e.g., Centered, -20mm fore" class="setup-input">
                             </li>
                         </ul>
@@ -308,13 +213,7 @@
                         <h3>Chassis Stiffness</h3>
                         <ul class="setup-list">
                             <li>
-                                <strong>Front Torsion Bars/Stiffeners:</strong> Inserting or removing the bar.
-                                <ul class="sub-info">
-                                    <li>Installing/Stiffening Bars: Increases chassis rigidity (useful on high-grip
-                                        tracks but can cause understeer if too stiff).</li>
-                                    <li>Removing/Loosening Bars: Increases chassis flex, increasing grip on low-grip or
-                                        bumpy surfaces.</li>
-                                </ul>
+                                <strong>Front Torsion Bars/Stiffeners:</strong>
                                 <input type="text" placeholder="e.g., Soft/Medium/Hard" class="setup-input">
                             </li>
                         </ul>
@@ -325,45 +224,20 @@
                         <h3>Tire Adjustments</h3>
                         <ul class="setup-list">
                             <li>
-                                <strong>Tire Pressure (PSI):</strong> Varying pressure in all four tires to tune for
-                                track grip and heat.
-                                <ul class="sub-info">
-                                    <li>Left Side vs. Right Side: Right-side tires often run higher pressure than left
-                                        side to help the kart turn and manage heat.</li>
-                                    <li>Front vs. Rear: Adjustments fine-tune the balance of front-end vs. rear-end
-                                        grip.</li>
-                                </ul>
+                                <strong>Tire Pressure (PSI):</strong>
                                 <input type="text" placeholder="e.g., LF: 1.1, RF: 1.3, LR: 1.2, RR: 1.4 PSI"
                                     class="setup-input">
                             </li>
                             <li>
-                                <strong>Tire Stagger:</strong> The difference in circumference (or diameter) between
-                                tires on the same axle.
-                                <ul class="sub-info">
-                                    <li>Rear Stagger (Right Rear > Left Rear): Increase makes the kart turn left more
-                                        aggressively. Decrease makes the kart track straighter (good for fast, sweeping
-                                        tracks).</li>
-                                    <li>Front Stagger (Right Front > Left Front): Increase helps the kart turn into the
-                                        corner.</li>
-                                </ul>
+                                <strong>Tire Stagger:</strong>
                                 <input type="text" placeholder="e.g., Rear: +0.5in, Front: +0.3in" class="setup-input">
                             </li>
                             <li>
-                                <strong>Tire Compound Selection:</strong> Choosing the correct tire compound (soft,
-                                medium, hard) for track conditions and temperature.
-                                <ul class="sub-info">
-                                    <li>Soft Compound: More grip in cold/low-traction conditions.</li>
-                                    <li>Hard Compound: Better for hot/high-traction conditions.</li>
-                                </ul>
+                                <strong>Tire Compound Selection:</strong>
                                 <input type="text" placeholder="e.g., Soft, Medium, Hard" class="setup-input">
                             </li>
                             <li>
-                                <strong>Tire Prep/Conditioning:</strong> Applying chemical treatments to soften rubber,
-                                increase grip, or pull moisture from track surface.
-                                <ul class="sub-info">
-                                    <li>Tire Grooming/Siping: Cutting grooves or sipes into tire surface to create
-                                        biting edges for increased forward and side grip.</li>
-                                </ul>
+                                <strong>Tire Prep/Conditioning:</strong>
                                 <input type="text" placeholder="e.g., Treated, Pre-mount, Siped" class="setup-input">
                             </li>
                         </ul>
@@ -374,98 +248,283 @@
                         <h3>Drivetrain & Engine</h3>
                         <ul class="setup-list">
                             <li>
-                                <strong>Gearing (Sprocket/Clutch Changes):</strong> Changing the ratio between the
-                                engine clutch and the rear axle sprocket.
-                                <ul class="sub-info">
-                                    <li>Smaller Axle Sprocket (Taller Gear): Higher top speed, slower acceleration (good
-                                        for a long straight).</li>
-                                    <li>Larger Axle Sprocket (Shorter Gear): Better acceleration off the corner, lower
-                                        top speed (good for tight tracks).</li>
-                                </ul>
+                                <strong>Gearing (Sprocket/Clutch Changes):</strong>
                                 <input type="number" placeholder="Typical: 50-80 teeth" class="setup-input" min="40"
                                     max="100">
                             </li>
                             <li>
-                                <strong>Clutch Engagement RPM:</strong> Adjusting the clutch springs or weights to
-                                change the engine RPM at which the clutch engages.
-                                <ul class="sub-info">
-                                    <li>Higher Engagement RPM: Delivers a harder "hit" of power, often beneficial.</li>
-                                    <li>Lower Engagement RPM: Smoother power delivery.</li>
-                                </ul>
+                                <strong>Clutch Engagement RPM:</strong>
                                 <input type="number" placeholder="Typical: 3000-7000 RPM" class="setup-input" min="2000"
                                     max="10000">
                             </li>
                             <li>
-                                <strong>Clutch Material/Type:</strong> Drum or disc clutches require different tuning
-                                for heat and track condition.
-                                <ul class="sub-info">
-                                    <li>Drum Clutch: Simpler, good for beginners.</li>
-                                    <li>Disc Clutch: More tunable, better for competitive racing.</li>
-                                </ul>
+                                <strong>Clutch Material/Type:</strong>
                                 <input type="text" placeholder="e.g., Drum, Disc" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Front Sprocket/Clutch Bell:</strong> Teeth adjustment for drivetrain ratio.
-                                <input type="number" placeholder="Typical: 7-13 teeth" class="setup-input" min="5"
-                                    max="20">
-                            </li>
-                            <li>
-                                <strong>Carburetor Jetting:</strong> High-speed and low-speed jet tuning.
-                                <input type="text" placeholder="e.g., Main: 110, Idle: 40" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Fuel/Oil Mixture:</strong> Proper ratios for your engine.
-                                <input type="text" placeholder="e.g., 50:1, 32:1" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Ignition Timing:</strong> Advance or retard timing, spark plug heat range.
-                                <input type="text" placeholder="e.g., +5°, BR8ES" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Exhaust System:</strong> Pipe length and volume for performance.
-                                <input type="text" placeholder="e.g., Stock, Performance, 280mm" class="setup-input">
                             </li>
                         </ul>
                     </div>
 
-                    <!-- Braking System -->
-                    <div class="setup-panel" data-setup-panel="brakes">
-                        <h3>Braking System</h3>
-                        <ul class="setup-list">
-                            <li>
-                                <strong>Brake Pad Compound:</strong> Different compounds for various conditions.
-                                <input type="text" placeholder="e.g., Soft, Medium, Hard" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Brake Disc Type/Material:</strong> Vented/solid, steel/cast iron.
-                                <input type="text" placeholder="e.g., Vented Steel" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Brake Bias:</strong> Front/rear split for balanced stopping.
-                                <input type="number" placeholder="Typical: 40-60%" class="setup-input" min="0"
-                                    max="100">
-                            </li>
-                            <li>
-                                <strong>Master Cylinder/Caliper:</strong> Piston size adjustments.
-                                <input type="text" placeholder="e.g., 14mm, 16mm piston" class="setup-input">
-                            </li>
-                            <li>
-                                <strong>Pedal Ratio/Feel:</strong> Adjusting pedal position and response.
-                                <input type="number" placeholder="Typical: -20 to 20mm" class="setup-input" min="-30"
-                                    max="30">
-                            </li>
-                        </ul>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Track History Section -->
+        <div class="app-section" data-section-content="track-history">
+            <h2>Track History</h2>
+            <p>View and manage your track history records.</p>
+            <div class="section-content">
+                <button class="btn primary" id="add-track-btn" style="margin-bottom: 16px;">Add Track</button>
+                <div id="track-list" style="position: relative; z-index: 1;"></div>
+            </div>
+            <!-- Add Track Modal -->
+            <div id="add-track-modal" style="display: none; position: fixed; top: calc(50% + 120px); left: 50%; transform: translate(-50%, -50%); z-index: 20000;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add New Track</h3>
+                        <button class="modal-close" onclick="closeAddTrackModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="track-name-input">Track Name:</label>
+                        <input type="text" id="track-name-input" class="setup-input" placeholder="Enter track name..." style="max-width: 100%; margin-top: 8px;">
+                        <label for="track-location-input" style="margin-top:12px;display:block;">Location:</label>
+                        <input type="text" id="track-location-input" class="setup-input" placeholder="Enter location..." style="max-width: 100%; margin-top: 8px;">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" onclick="closeAddTrackModal()" style="background: rgba(255,255,255,0.05);">Cancel</button>
+                        <button class="btn primary" id="confirm-add-track-btn">Add Track</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Logs Section -->
-        <div class="app-section" data-section-content="logs">
-            <h2>Race Analytics</h2>
-            <p>Review your performance metrics and race history.</p>
+        <!-- Track Details Section -->
+        <div class="app-section" data-section-content="track-details" style="display:none;">
+            <div class="settings-header">
+                <button class="back-btn" id="back-to-track-list">&larr; Back to Tracks</button>
+                <h2 id="track-details-title">Track Details</h2>
+            </div>
             <div class="section-content">
-                <p>Analytics coming soon...</p>
+                <button class="btn primary" id="add-day-btn" style="margin-bottom: 16px;">Add Day</button>
+                <div id="day-list"></div>
+            </div>
+        </div>
+
+        <!-- Day Entry Section -->
+        <div class="app-section" data-section-content="day-entry" style="display:none;">
+            <div class="settings-header">
+                <button class="back-btn" id="back-to-track-details">&larr; Back to Track</button>
+                <h2 id="day-entry-title">Day Entry</h2>
+                <button class="btn primary" id="save-day-btn" style="margin-left: auto;">💾 Save Day</button>
+            </div>
+            <div class="section-content">
+                <h3>Track Conditions</h3>
+                <ul class="setup-list">
+                    <li>
+                        <strong>Surface Condition:</strong>
+                        <select id="surface-condition" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Wet/Slick">Wet/Slick</option>
+                            <option value="Dry/Dusty">Dry/Dusty</option>
+                            <option value="Tacky/Heavy">Tacky/Heavy</option>
+                            <option value="Rubbered-in">Rubbered-in</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Moisture Content:</strong>
+                        <select id="moisture-content" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Very Wet - muddy">Very Wet - muddy</option>
+                            <option value="Moist - tacky">Moist - tacky</option>
+                            <option value="Dry - dusty/slick">Dry - dusty/slick</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Grip Level:</strong>
+                        <select id="grip-level" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High/Bitey">High/Bitey</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Groove Position:</strong>
+                        <select id="groove-position" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Bottom Groove only">Bottom Groove only</option>
+                            <option value="Top Groove">Top Groove</option>
+                            <option value="Multiple Lanes">Multiple Lanes</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Surface Texture:</strong>
+                        <select id="surface-texture" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Smooth">Smooth</option>
+                            <option value="Bumpy">Bumpy</option>
+                            <option value="Ruts">Ruts</option>
+                        </select>
+                    </li>
+                </ul>
+                <h3 style="margin-top:24px;">Atmospheric and Weather Conditions</h3>
+                <ul class="setup-list">
+                    <li>
+                        <strong>Ambient Air Temperature:</strong>
+                        <input type="text" id="air-temperature" class="setup-input" placeholder="e.g., 75°F or 24°C" style="margin-top:8px;">
+                    </li>
+                    <li>
+                        <strong>Track Surface Temperature:</strong>
+                        <input type="text" id="surface-temperature" class="setup-input" placeholder="e.g., 85°F or 29°C" style="margin-top:8px;">
+                    </li>
+                    <li>
+                        <strong>Humidity:</strong>
+                        <select id="humidity" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Time of Day:</strong>
+                        <select id="time-of-day" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Day">Day</option>
+                            <option value="Dusk">Dusk</option>
+                            <option value="Night">Night</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Wind Conditions:</strong>
+                        <input type="text" id="wind-conditions" class="setup-input" placeholder="e.g., Strong headwind on back straight" style="margin-top:8px;">
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- View Day Section -->
+        <div class="app-section" data-section-content="view-day" style="display:none;">
+            <div class="settings-header">
+                <button class="back-btn" id="back-from-view-day">&larr; Back to Track</button>
+                <h2 id="view-day-title">Day Details</h2>
+            </div>
+            <div class="section-content" id="view-day-content">
+                <!-- Content populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Edit Day Section -->
+        <div class="app-section" data-section-content="edit-day" style="display:none;">
+            <div class="settings-header">
+                <button class="back-btn" id="back-from-edit-day">&larr; Back to Track</button>
+                <h2 id="edit-day-title">Edit Day</h2>
+                <button class="btn primary" id="save-edit-day-btn" style="margin-left: auto;">💾 Save Changes</button>
+            </div>
+            <div class="section-content">
+                <h3>Basic Information</h3>
+                <ul class="setup-list">
+                    <li>
+                        <strong>Race Name:</strong>
+                        <input type="text" id="edit-race-name" class="setup-input" placeholder="Enter race name..." style="margin-top:8px; max-width: 100%;">
+                    </li>
+                    <li>
+                        <strong>Recording Date & Time:</strong>
+                        <input type="datetime-local" id="edit-timestamp" class="setup-input" style="margin-top:8px; max-width: 100%;">
+                    </li>
+                </ul>
+                <h3 style="margin-top:24px;">Track Conditions</h3>
+                <ul class="setup-list">
+                    <li>
+                        <strong>Surface Condition:</strong>
+                        <select id="edit-surface-condition" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Wet/Slick">Wet/Slick</option>
+                            <option value="Dry/Dusty">Dry/Dusty</option>
+                            <option value="Tacky/Heavy">Tacky/Heavy</option>
+                            <option value="Rubbered-in">Rubbered-in</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Moisture Content:</strong>
+                        <select id="edit-moisture-content" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Very Wet - muddy">Very Wet - muddy</option>
+                            <option value="Moist - tacky">Moist - tacky</option>
+                            <option value="Dry - dusty/slick">Dry - dusty/slick</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Grip Level:</strong>
+                        <select id="edit-grip-level" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High/Bitey">High/Bitey</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Groove Position:</strong>
+                        <select id="edit-groove-position" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Bottom Groove only">Bottom Groove only</option>
+                            <option value="Top Groove">Top Groove</option>
+                            <option value="Multiple Lanes">Multiple Lanes</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Surface Texture:</strong>
+                        <select id="edit-surface-texture" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Smooth">Smooth</option>
+                            <option value="Bumpy">Bumpy</option>
+                            <option value="Ruts">Ruts</option>
+                        </select>
+                    </li>
+                </ul>
+                <h3 style="margin-top:24px;">Atmospheric and Weather Conditions</h3>
+                <ul class="setup-list">
+                    <li>
+                        <strong>Ambient Air Temperature:</strong>
+                        <input type="text" id="edit-air-temperature" class="setup-input" placeholder="e.g., 75°F or 24°C" style="margin-top:8px;">
+                    </li>
+                    <li>
+                        <strong>Track Surface Temperature:</strong>
+                        <input type="text" id="edit-surface-temperature" class="setup-input" placeholder="e.g., 85°F or 29°C" style="margin-top:8px;">
+                    </li>
+                    <li>
+                        <strong>Humidity:</strong>
+                        <select id="edit-humidity" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Time of Day:</strong>
+                        <select id="edit-time-of-day" class="setup-input" style="margin-top:8px;">
+                            <option value="">Select...</option>
+                            <option value="Day">Day</option>
+                            <option value="Dusk">Dusk</option>
+                            <option value="Night">Night</option>
+                        </select>
+                    </li>
+                    <li>
+                        <strong>Wind Conditions:</strong>
+                        <input type="text" id="edit-wind-conditions" class="setup-input" placeholder="e.g., Strong headwind on back straight" style="margin-top:8px;">
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tire History Section -->
+        <div class="app-section" data-section-content="tire-history">
+            <h2>Tire History</h2>
+            <p>View and manage your tire usage and history.</p>
+            <div class="section-content">
+                <p>Tire history feature coming soon...</p>
             </div>
         </div>
 
@@ -474,7 +533,7 @@
             <h2>Saved Builds</h2>
             <p>Manage and load your favorite kart configurations.</p>
             <div class="section-content">
-                <p>Your saved builds will appear here...</p>
+                <div id="saved-builds-list"></div>
             </div>
         </div>
     </main>
@@ -483,6 +542,130 @@
         <small>&copy; 2025 Racer Ready</small>
     </footer>
 
+    <!-- Save Build Modal -->
+    <div class="modal-overlay" id="save-build-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💾 Save Build</h3>
+                <button class="modal-close" onclick="closeSaveBuildModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="build-name-input">Build Name:</label>
+                <input type="text" id="build-name-input" class="setup-input" placeholder="Enter a name for your build..." style="max-width: 100%; margin-top: 8px;">
+                <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6); margin-top: 12px;">
+                    This will save all current settings and configurations.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeSaveBuildModal()" style="background: rgba(255,255,255,0.05);">Cancel</button>
+                <button class="btn primary" onclick="confirmSaveBuild()">Save Build</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Modal -->
+    <div class="modal-overlay" id="prompt-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="prompt-modal-title">Input</h3>
+                <button class="modal-close" onclick="closePromptModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="prompt-modal-message"></p>
+                <input type="text" id="prompt-modal-input" class="setup-input" style="max-width: 100%; margin-top: 12px;" placeholder="Enter value...">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closePromptModal(null)" style="background: rgba(255,255,255,0.05);">Cancel</button>
+                <button class="btn primary" onclick="closePromptModal(document.getElementById('prompt-modal-input').value)">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div class="modal-overlay" id="alert-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="alert-modal-title">Alert</h3>
+                <button class="modal-close" onclick="closeAlertModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="alert-modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" onclick="closeAlertModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirm-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirm-modal-title">❓ Confirm</h3>
+                <button class="modal-close" onclick="closeConfirmModal(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeConfirmModal(false)">Cancel</button>
+                <button class="btn primary" onclick="closeConfirmModal(true)">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi_oZtWxAvLa3aKeb_u1L_Gg31Bbf9u-A",
+            authDomain: "racerready-a70d1.firebaseapp.com",
+            projectId: "racerready-a70d1",
+            storageBucket: "racerready-a70d1.firebasestorage.app",
+            messagingSenderId: "101209144078",
+            appId: "1:101209144078:web:133e745dd019211e63f55f"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Make Firebase functions available globally
+        window.firebaseDb = db;
+        window.firebaseAuth = auth;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseDeleteDoc = deleteDoc;
+        window.firebaseUpdateDoc = updateDoc;
+        window.firebaseDoc = doc;
+        window.firebaseQuery = query;
+        window.firebaseWhere = where;
+        window.firebaseOrderBy = orderBy;
+        window.firebaseTimestamp = Timestamp;
+        window.firebaseSignOut = signOut;
+
+        // Auth state listener - redirect to sign.html if not logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'sign.html';
+            } else {
+                window.currentUser = user;
+                // Update avatar with initials
+                const avatarEl = document.querySelector('.avatar');
+                if (avatarEl && user.email) {
+                    const initials = user.email.substring(0, 2).toUpperCase();
+                    avatarEl.textContent = initials;
+                }
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 
