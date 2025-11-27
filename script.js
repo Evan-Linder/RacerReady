@@ -17,7 +17,6 @@
         function setupTrackHistory() {
             const addTrackBtn = document.getElementById('add-track-btn');
             const trackListDiv = document.getElementById('track-list');
-            const addTrackModal = document.getElementById('add-track-modal');
             const trackNameInput = document.getElementById('track-name-input');
             const trackLocationInput = document.getElementById('track-location-input');
             const confirmAddTrackBtn = document.getElementById('confirm-add-track-btn');
@@ -77,15 +76,35 @@
                 });
             }
 
-            function openAddTrackModal() {
-                if (addTrackModal) addTrackModal.style.display = 'flex';
-                if (trackNameInput) trackNameInput.value = '';
-                if (trackLocationInput) trackLocationInput.value = '';
-                if (trackListDiv) trackListDiv.style.display = 'none';
+            function openAddTrackSection() {
+                const trackHistorySection = document.querySelector('[data-section-content="track-history"]');
+                const addTrackSection = document.querySelector('[data-section-content="add-track"]');
+                const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
+                
+                if (trackHistorySection) trackHistorySection.classList.remove('active');
+                if (trackDetailsSection) trackDetailsSection.classList.remove('active');
+                if (addTrackSection) {
+                    addTrackSection.classList.add('active');
+                    
+                    if (trackNameInput) trackNameInput.value = '';
+                    if (trackLocationInput) trackLocationInput.value = '';
+                }
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
             }
-            window.closeAddTrackModal = function() {
-                if (addTrackModal) addTrackModal.style.display = 'none';
-                if (trackListDiv) trackListDiv.style.display = 'block';
+            
+            window.backToTrackHistory = function() {
+                const trackHistorySection = document.querySelector('[data-section-content="track-history"]');
+                const addTrackSection = document.querySelector('[data-section-content="add-track"]');
+                const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
+                
+                if (addTrackSection) addTrackSection.classList.remove('active');
+                if (trackDetailsSection) trackDetailsSection.classList.remove('active');
+                if (trackHistorySection) trackHistorySection.classList.add('active');
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
             };
 
             async function addTrack() {
@@ -113,14 +132,19 @@
                         userId: window.currentUser.uid,
                         timestamp: Date.now()
                     });
+                    
+                    const addTrackSection = document.querySelector('[data-section-content="add-track"]');
+                    const trackHistorySection = document.querySelector('[data-section-content="track-history"]');
+                    if (addTrackSection) addTrackSection.classList.remove('active');
+                    if (trackHistorySection) trackHistorySection.classList.add('active');
+                    
                     await renderTrackList();
-                    window.closeAddTrackModal();
                 } else {
                     showAlert('Database not available.', 'Error', '❌');
                 }
             }
 
-            if (addTrackBtn) addTrackBtn.addEventListener('click', openAddTrackModal);
+            if (addTrackBtn) addTrackBtn.addEventListener('click', openAddTrackSection);
             if (confirmAddTrackBtn) confirmAddTrackBtn.addEventListener('click', addTrack);
             if (trackNameInput) trackNameInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') addTrack();
@@ -155,13 +179,19 @@
                 window.currentTrack = track;
                 const trackHistorySection = document.querySelector('[data-section-content="track-history"]');
                 const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
+                const addTrackSection = document.querySelector('[data-section-content="add-track"]');
                 const trackDetailsTitle = document.getElementById('track-details-title');
                 if (trackHistorySection) trackHistorySection.classList.remove('active');
+                if (addTrackSection) addTrackSection.classList.remove('active');
                 if (trackDetailsSection) {
                     trackDetailsSection.classList.add('active');
                     trackDetailsSection.style.display = 'block';
                 }
                 if (trackDetailsTitle) trackDetailsTitle.textContent = track.name;
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
+                
                 renderDayList();
             }
 
@@ -292,9 +322,20 @@
                     const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
                     const dayEntrySection = document.querySelector('[data-section-content="day-entry"]');
                     const dayEntryTitle = document.getElementById('day-entry-title');
+                    const trackSettingsSection = document.querySelector('[data-section-content="track-settings"]');
+                    const pointsStandingsSection = document.querySelector('[data-section-content="points-standings"]');
+                    
                     if (trackDetailsSection) {
                         trackDetailsSection.classList.remove('active');
                         trackDetailsSection.style.display = 'none';
+                    }
+                    if (trackSettingsSection) {
+                        trackSettingsSection.classList.remove('active');
+                        trackSettingsSection.style.display = 'none';
+                    }
+                    if (pointsStandingsSection) {
+                        pointsStandingsSection.classList.remove('active');
+                        pointsStandingsSection.style.display = 'none';
                     }
                     if (dayEntrySection) {
                         dayEntrySection.classList.add('active');
@@ -303,23 +344,144 @@
                     if (dayEntryTitle && window.currentTrack) {
                         dayEntryTitle.textContent = `Day Entry - ${window.currentTrack.name}`;
                     }
+                    
+                    const appContainer = document.querySelector('.app-container');
+                    if (appContainer) appContainer.scrollTop = 0;
+                });
+            }
+            
+            const trackSettingsBtn = document.getElementById('track-settings-btn');
+            if (trackSettingsBtn) {
+                trackSettingsBtn.addEventListener('click', function() {
+                    openTrackSettings();
+                });
+            }
+            
+            const pointsStandingsBtn = document.getElementById('points-standings-btn');
+            if (pointsStandingsBtn) {
+                pointsStandingsBtn.addEventListener('click', function() {
+                    openPointsStandings();
                 });
             }
 
             const backToTrackDetailsBtn = document.getElementById('back-to-track-details');
             if (backToTrackDetailsBtn) {
                 backToTrackDetailsBtn.addEventListener('click', function() {
-                    const dayEntrySection = document.querySelector('[data-section-content="day-entry"]');
-                    const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
-                    if (dayEntrySection) {
-                        dayEntrySection.classList.remove('active');
-                        dayEntrySection.style.display = 'none';
-                    }
-                    if (trackDetailsSection) {
-                        trackDetailsSection.classList.add('active');
-                        trackDetailsSection.style.display = 'block';
-                    }
+                    backToTrackDetails();
                 });
+            }
+            
+            window.backToTrackDetails = function() {
+                const dayEntrySection = document.querySelector('[data-section-content="day-entry"]');
+                const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
+                const trackSettingsSection = document.querySelector('[data-section-content="track-settings"]');
+                const pointsStandingsSection = document.querySelector('[data-section-content="points-standings"]');
+                
+                if (dayEntrySection) {
+                    dayEntrySection.classList.remove('active');
+                    dayEntrySection.style.display = 'none';
+                }
+                if (trackSettingsSection) {
+                    trackSettingsSection.classList.remove('active');
+                    trackSettingsSection.style.display = 'none';
+                }
+                if (pointsStandingsSection) {
+                    pointsStandingsSection.classList.remove('active');
+                    pointsStandingsSection.style.display = 'none';
+                }
+                if (trackDetailsSection) {
+                    trackDetailsSection.classList.add('active');
+                    trackDetailsSection.style.display = 'block';
+                }
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
+            };
+            
+            function openTrackSettings() {
+                if (!window.currentTrack) return;
+                
+                const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
+                const trackSettingsSection = document.querySelector('[data-section-content="track-settings"]');
+                const pointsStandingsSection = document.querySelector('[data-section-content="points-standings"]');
+                const dayEntrySection = document.querySelector('[data-section-content="day-entry"]');
+                
+                if (trackDetailsSection) {
+                    trackDetailsSection.classList.remove('active');
+                    trackDetailsSection.style.display = 'none';
+                }
+                if (pointsStandingsSection) {
+                    pointsStandingsSection.classList.remove('active');
+                    pointsStandingsSection.style.display = 'none';
+                }
+                if (dayEntrySection) {
+                    dayEntrySection.classList.remove('active');
+                    dayEntrySection.style.display = 'none';
+                }
+                if (trackSettingsSection) {
+                    trackSettingsSection.classList.add('active');
+                    trackSettingsSection.style.display = 'block';
+                    
+                    // Populate form with current track data
+                    const nameInput = document.getElementById('track-settings-name');
+                    const locationInput = document.getElementById('track-settings-location');
+                    const notesInput = document.getElementById('track-settings-notes');
+                    const titleElement = document.getElementById('track-settings-title');
+                    
+                    if (nameInput) nameInput.value = window.currentTrack.name || '';
+                    if (locationInput) locationInput.value = window.currentTrack.location || '';
+                    if (notesInput) notesInput.value = window.currentTrack.notes || '';
+                    if (titleElement) titleElement.textContent = `Track Settings - ${window.currentTrack.name}`;
+                }
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
+            }
+            
+            async function openPointsStandings() {
+                if (!window.currentTrack) return;
+                
+                const trackDetailsSection = document.querySelector('[data-section-content="track-details"]');
+                const trackSettingsSection = document.querySelector('[data-section-content="track-settings"]');
+                const pointsStandingsSection = document.querySelector('[data-section-content="points-standings"]');
+                const dayEntrySection = document.querySelector('[data-section-content="day-entry"]');
+                
+                if (trackDetailsSection) {
+                    trackDetailsSection.classList.remove('active');
+                    trackDetailsSection.style.display = 'none';
+                }
+                if (trackSettingsSection) {
+                    trackSettingsSection.classList.remove('active');
+                    trackSettingsSection.style.display = 'none';
+                }
+                if (dayEntrySection) {
+                    dayEntrySection.classList.remove('active');
+                    dayEntrySection.style.display = 'none';
+                }
+                if (pointsStandingsSection) {
+                    pointsStandingsSection.classList.add('active');
+                    pointsStandingsSection.style.display = 'block';
+                    
+                    // Populate form with current standings data
+                    const totalPointsInput = document.getElementById('total-points-input');
+                    const currentPositionInput = document.getElementById('current-position-input');
+                    const racesEnteredInput = document.getElementById('races-entered-input');
+                    const winsInput = document.getElementById('wins-input');
+                    const podiumsInput = document.getElementById('podiums-input');
+                    const standingsNotesInput = document.getElementById('standings-notes');
+                    const titleElement = document.getElementById('points-standings-title');
+                    
+                    if (totalPointsInput) totalPointsInput.value = window.currentTrack.totalPoints || 0;
+                    if (currentPositionInput) currentPositionInput.value = window.currentTrack.currentPosition || '';
+                    if (racesEnteredInput) racesEnteredInput.value = window.currentTrack.racesEntered || 0;
+                    if (winsInput) winsInput.value = window.currentTrack.wins || 0;
+                    if (podiumsInput) podiumsInput.value = window.currentTrack.podiums || 0;
+                    if (standingsNotesInput) standingsNotesInput.value = window.currentTrack.standingsNotes || '';
+                    if (titleElement) titleElement.textContent = `Points Standings - ${window.currentTrack.name}`;
+                }
+                
+                const appContainer = document.querySelector('.app-container');
+                if (appContainer) appContainer.scrollTop = 0;
             }
 
             // View day function
@@ -627,14 +789,145 @@
                             
                             // Refresh day list
                             await renderDayList();
-                            
-                            showAlert('Day entry saved successfully!', 'Success', '✅');
                         } catch (error) {
                             console.error('Error saving day:', error);
                             showAlert('Error saving day entry.', 'Error', '❌');
                         }
                     } else {
                         showAlert('Database not available.', 'Error', '❌');
+                    }
+                });
+            }
+
+            // Save Track Settings
+            const saveTrackSettingsBtn = document.getElementById('save-track-settings-btn');
+            if (saveTrackSettingsBtn) {
+                saveTrackSettingsBtn.addEventListener('click', async function() {
+                    if (!window.currentTrack) {
+                        showAlert('No track selected.', 'Error', '❌');
+                        return;
+                    }
+                    
+                    const name = document.getElementById('track-settings-name')?.value.trim() || '';
+                    const location = document.getElementById('track-settings-location')?.value.trim() || '';
+                    const notes = document.getElementById('track-settings-notes')?.value.trim() || '';
+                    
+                    if (!name) {
+                        showAlert('Track name is required.', 'Error', '⚠️');
+                        return;
+                    }
+                    
+                    try {
+                        await window.firebaseUpdateDoc(
+                            window.firebaseDoc(window.firebaseDb, 'tracks', window.currentTrack.id),
+                            { name, location, notes }
+                        );
+                        
+                        // Update current track object
+                        window.currentTrack.name = name;
+                        window.currentTrack.location = location;
+                        window.currentTrack.notes = notes;
+                        
+                        showAlert('Track settings saved successfully!', 'Saved', '✅');
+                        
+                        // Update the track details title
+                        const trackDetailsTitle = document.getElementById('track-details-title');
+                        if (trackDetailsTitle) trackDetailsTitle.textContent = name;
+                        
+                        await renderTrackList();
+                    } catch (error) {
+                        console.error('Error saving track settings:', error);
+                        showAlert('Error saving settings.', 'Error', '❌');
+                    }
+                });
+            }
+            
+            // Delete Track
+            const deleteTrackBtn = document.getElementById('delete-track-btn');
+            if (deleteTrackBtn) {
+                deleteTrackBtn.addEventListener('click', async function() {
+                    if (!window.currentTrack) return;
+                    
+                    const confirmed = await showConfirm(
+                        `Delete track "${window.currentTrack.name}"? This will also delete all associated days.`,
+                        'Delete Track',
+                        '⚠️'
+                    );
+                    
+                    if (!confirmed) return;
+                    
+                    try {
+                        // Delete all associated days first
+                        const daysQuery = window.firebaseQuery(
+                            window.firebaseCollection(window.firebaseDb, 'days'),
+                            window.firebaseWhere('trackId', '==', window.currentTrack.id)
+                        );
+                        const daysSnapshot = await window.firebaseGetDocs(daysQuery);
+                        const deletePromises = [];
+                        daysSnapshot.forEach(doc => {
+                            deletePromises.push(window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'days', doc.id)));
+                        });
+                        await Promise.all(deletePromises);
+                        
+                        // Delete the track
+                        await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tracks', window.currentTrack.id));
+                        
+                        // Navigate back to track history
+                        window.currentTrack = null;
+                        const trackSettingsSection = document.querySelector('[data-section-content="track-settings"]');
+                        const trackHistorySection = document.querySelector('[data-section-content="track-history"]');
+                        if (trackSettingsSection) trackSettingsSection.classList.remove('active');
+                        if (trackHistorySection) trackHistorySection.classList.add('active');
+                        
+                        await renderTrackList();
+                    } catch (error) {
+                        console.error('Error deleting track:', error);
+                        showAlert('Error deleting track.', 'Error', '❌');
+                    }
+                });
+            }
+            
+            // Save Points Standings
+            const saveStandingsBtn = document.getElementById('save-standings-btn');
+            if (saveStandingsBtn) {
+                saveStandingsBtn.addEventListener('click', async function() {
+                    if (!window.currentTrack) {
+                        showAlert('No track selected.', 'Error', '❌');
+                        return;
+                    }
+                    
+                    const totalPoints = parseInt(document.getElementById('total-points-input')?.value) || 0;
+                    const currentPosition = parseInt(document.getElementById('current-position-input')?.value) || null;
+                    const racesEntered = parseInt(document.getElementById('races-entered-input')?.value) || 0;
+                    const wins = parseInt(document.getElementById('wins-input')?.value) || 0;
+                    const podiums = parseInt(document.getElementById('podiums-input')?.value) || 0;
+                    const standingsNotes = document.getElementById('standings-notes')?.value.trim() || '';
+                    
+                    try {
+                        await window.firebaseUpdateDoc(
+                            window.firebaseDoc(window.firebaseDb, 'tracks', window.currentTrack.id),
+                            { 
+                                totalPoints, 
+                                currentPosition, 
+                                racesEntered, 
+                                wins, 
+                                podiums, 
+                                standingsNotes 
+                            }
+                        );
+                        
+                        // Update current track object
+                        window.currentTrack.totalPoints = totalPoints;
+                        window.currentTrack.currentPosition = currentPosition;
+                        window.currentTrack.racesEntered = racesEntered;
+                        window.currentTrack.wins = wins;
+                        window.currentTrack.podiums = podiums;
+                        window.currentTrack.standingsNotes = standingsNotes;
+                        
+                        showAlert('Points standings saved successfully!', 'Saved', '✅');
+                    } catch (error) {
+                        console.error('Error saving standings:', error);
+                        showAlert('Error saving standings.', 'Error', '❌');
                     }
                 });
             }
@@ -647,6 +940,914 @@
             });
         }
         setupTrackHistory();
+
+        // --- Tire History Logic ---
+        function setupTireHistory() {
+            const addTireSetBtn = document.getElementById('add-tire-set-btn');
+            const tireSetListDiv = document.getElementById('tire-set-list');
+            const tireSetNameInput = document.getElementById('tire-set-name-input');
+            const tireBrandInput = document.getElementById('tire-brand-input');
+            const tireModelInput = document.getElementById('tire-model-input');
+            const tireQuantityInput = document.getElementById('tire-quantity-input');
+            const confirmAddTireSetBtn = document.getElementById('confirm-add-tire-set-btn');
+            let tireSets = [];
+
+            async function renderTireSetList() {
+                if (!tireSetListDiv) return;
+                
+                if (!window.currentUser) {
+                    tireSetListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Please log in to view tire sets.</p>';
+                    return;
+                }
+                
+                tireSetListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Loading tire sets...</p>';
+                if (!window.firebaseDb || !window.firebaseGetDocs || !window.firebaseCollection) {
+                    tireSetListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Database not available.</p>';
+                    return;
+                }
+                
+                // Query tire sets for current user only
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'tireSets'),
+                    window.firebaseWhere('userId', '==', window.currentUser.uid)
+                );
+                const querySnapshot = await window.firebaseGetDocs(q);
+                tireSets = [];
+                querySnapshot.forEach(doc => {
+                    tireSets.push({ id: doc.id, ...doc.data() });
+                });
+                tireSetListDiv.innerHTML = '';
+                if (tireSets.length === 0) {
+                    tireSetListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">No tire sets added yet.</p>';
+                    return;
+                }
+                tireSets.forEach((tireSet) => {
+                    const card = document.createElement('div');
+                    card.className = 'instruction-card';
+                    card.style.textAlign = 'left';
+                    card.style.width = '100%';
+                    card.style.margin = '16px 0';
+                    let timestamp = tireSet.timestamp ? new Date(tireSet.timestamp).toLocaleString() : '';
+                    card.innerHTML = `
+                        <h3>${tireSet.setName}</h3>
+                        <p style="font-size: 0.95rem; color: rgba(230,238,246,0.8); margin-bottom: 4px;">
+                            <strong>Brand:</strong> ${tireSet.brand} | <strong>Model:</strong> ${tireSet.model}
+                        </p>
+                        <p style="font-size: 0.95rem; color: rgba(230,238,246,0.8); margin-bottom: 8px;">
+                            <strong>Quantity:</strong> ${tireSet.quantity} tire${tireSet.quantity > 1 ? 's' : ''}
+                        </p>
+                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6);">
+                            ${timestamp ? 'Added: ' + timestamp : ''}
+                        </p>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn" data-action="load-set" data-id="${tireSet.id}" style="flex: 1;">📥 Load</button>
+                            <button class="btn" data-action="delete-tire" data-id="${tireSet.id}" style="flex: 1; background: rgba(255,51,51,0.2); border-color: rgba(255,51,51,0.3);">🗑️ Delete</button>
+                        </div>
+                    `;
+                    tireSetListDiv.appendChild(card);
+                });
+            }
+
+            function openAddTireSetSection() {
+                const tireHistorySection = document.querySelector('[data-section-content="tire-history"]');
+                const addTireSetSection = document.querySelector('[data-section-content="add-tire-set"]');
+                const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                
+                if (tireHistorySection) tireHistorySection.classList.remove('active');
+                if (setDetailsSection) setDetailsSection.classList.remove('active');
+                if (addTireSetSection) {
+                    addTireSetSection.classList.add('active');
+                    
+                    if (tireSetNameInput) tireSetNameInput.value = '';
+                    if (tireBrandInput) tireBrandInput.value = '';
+                    if (tireModelInput) tireModelInput.value = '';
+                    if (tireQuantityInput) tireQuantityInput.value = '4';
+                }
+            }
+
+            async function addTireSet() {
+                const setName = tireSetNameInput.value.trim();
+                const brand = tireBrandInput.value.trim();
+                const model = tireModelInput.value.trim();
+                const quantity = parseInt(tireQuantityInput.value);
+                
+                if (!window.currentUser) {
+                    showAlert('Please log in to add tire sets.', 'Not Logged In', '⚠️');
+                    return;
+                }
+                
+                if (!setName) {
+                    showAlert('Please enter a set name.', 'Set Name Required', '⚠️');
+                    return;
+                }
+                
+                if (!brand) {
+                    showAlert('Please enter a tire brand.', 'Brand Required', '⚠️');
+                    return;
+                }
+                
+                if (!model) {
+                    showAlert('Please enter a tire model.', 'Model Required', '⚠️');
+                    return;
+                }
+                
+                if (!quantity || quantity < 1 || quantity > 4) {
+                    showAlert('Please enter a quantity between 1 and 4.', 'Invalid Quantity', '⚠️');
+                    return;
+                }
+                
+                try {
+                    const newTireSet = {
+                        setName: setName,
+                        brand: brand,
+                        model: model,
+                        quantity: quantity,
+                        userId: window.currentUser.uid,
+                        timestamp: Date.now()
+                    };
+                    await window.firebaseAddDoc(window.firebaseCollection(window.firebaseDb, 'tireSets'), newTireSet);
+                    
+                    const addTireSetSection = document.querySelector('[data-section-content="add-tire-set"]');
+                    const tireHistorySection = document.querySelector('[data-section-content="tire-history"]');
+                    if (addTireSetSection) addTireSetSection.classList.remove('active');
+                    if (tireHistorySection) tireHistorySection.classList.add('active');
+                    
+                    await renderTireSetList();
+                } catch (error) {
+                    console.error('Error adding tire set:', error);
+                    showAlert('Error adding tire set. Please try again.', 'Error', '❌');
+                }
+            }
+
+            if (addTireSetBtn) {
+                addTireSetBtn.addEventListener('click', openAddTireSetSection);
+            }
+            
+            if (confirmAddTireSetBtn) {
+                confirmAddTireSetBtn.addEventListener('click', addTireSet);
+            }
+            
+            if (tireSetListDiv) {
+                tireSetListDiv.addEventListener('click', async function(e) {
+                    const btn = e.target.closest('button[data-action]');
+                    if (!btn) return;
+                    const action = btn.getAttribute('data-action');
+                    const id = btn.getAttribute('data-id');
+                    
+                    if (action === 'load-set') {
+                        loadTireSetDetails(id);
+                    } else if (action === 'delete-tire') {
+                        const confirmed = await showConfirm('Are you sure you want to delete this tire set?', 'Delete Tire Set', '🗑️');
+                        if (confirmed) {
+                            try {
+                                await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tireSets', id));
+                                await renderTireSetList();
+                            } catch (error) {
+                                console.error('Error deleting tire set:', error);
+                                showAlert('Error deleting tire set. Please try again.', 'Error', '❌');
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Load tire sets when tire history section is activated
+            window.addEventListener('loadTireHistory', function() {
+                setTimeout(() => {
+                    renderTireSetList();
+                }, 50);
+            });
+            
+            async function loadTireSetDetails(setId) {
+                const tireSet = tireSets.find(ts => ts.id === setId);
+                if (!tireSet) return;
+                
+                // Store current set ID for later use
+                window.currentTireSetId = setId;
+                window.currentTireSet = tireSet;
+                
+                // Hide tire history section and show set details section
+                const tireHistorySection = document.querySelector('[data-section-content="tire-history"]');
+                const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                const addTireSetSection = document.querySelector('[data-section-content="add-tire-set"]');
+                
+                if (tireHistorySection) tireHistorySection.classList.remove('active');
+                if (addTireSetSection) addTireSetSection.classList.remove('active');
+                if (setDetailsSection) {
+                    setDetailsSection.classList.add('active');
+                    
+                    // Update set details info - condensed format
+                    const setInfo = document.getElementById('tire-set-details-info');
+                    if (setInfo) setInfo.innerHTML = `${tireSet.setName} | ${tireSet.brand} | Qty: ${tireSet.quantity}`;
+                    
+                    // Render individual tires list
+                    renderTiresList(setId);
+                }
+            }
+            
+            async function renderTiresList(setId) {
+                const tiresListDiv = document.getElementById('tires-list');
+                if (!tiresListDiv) return;
+                
+                if (!window.firebaseDb || !window.firebaseGetDocs || !window.firebaseCollection) {
+                    tiresListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Database not available.</p>';
+                    return;
+                }
+                
+                tiresListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Loading tires...</p>';
+                
+                // Query tires for current set
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'tires'),
+                    window.firebaseWhere('setId', '==', setId),
+                    window.firebaseWhere('userId', '==', window.currentUser.uid)
+                );
+                const querySnapshot = await window.firebaseGetDocs(q);
+                const tires = [];
+                querySnapshot.forEach(doc => {
+                    tires.push({ id: doc.id, ...doc.data() });
+                });
+                
+                tiresListDiv.innerHTML = '';
+                if (tires.length === 0) {
+                    tiresListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">No individual tires added yet.</p>';
+                    return;
+                }
+                
+                // Fetch most recent event for each tire
+                for (const tire of tires) {
+                    const card = document.createElement('div');
+                    card.className = 'instruction-card';
+                    card.style.textAlign = 'left';
+                    card.style.width = '100%';
+                    card.style.margin = '16px 0';
+                    card.style.background = 'rgba(230,238,246,0.05)';
+                    card.style.border = '1px solid rgba(230,238,246,0.15)';
+                    let timestamp = tire.timestamp ? new Date(tire.timestamp).toLocaleString() : '';
+                    
+                    // Fetch most recent event for this tire
+                    let eventInfo = '';
+                    try {
+                        const eventsQuery = window.firebaseQuery(
+                            window.firebaseCollection(window.firebaseDb, 'tireEvents'),
+                            window.firebaseWhere('tireId', '==', tire.id)
+                        );
+                        const eventsSnapshot = await window.firebaseGetDocs(eventsQuery);
+                        if (!eventsSnapshot.empty) {
+                            // Get all events and sort by timestamp
+                            const events = [];
+                            eventsSnapshot.forEach(doc => {
+                                events.push({ id: doc.id, ...doc.data() });
+                            });
+                            
+                            // Sort by timestamp descending (most recent first)
+                            events.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                            
+                            if (events.length > 0) {
+                                const latestEvent = events[0];
+                                const eventDate = latestEvent.timestamp ? new Date(latestEvent.timestamp).toLocaleString() : '';
+                                
+                                // Handle both old and new schema
+                                let eventDetails = '';
+                                if (latestEvent.outerChemical || latestEvent.innerChemical) {
+                                    // New schema
+                                    if (latestEvent.outerChemical) {
+                                        eventDetails += `<p style="font-size: 0.85rem; color: rgba(230,238,246,0.7);">Outer: ${latestEvent.outerChemical}${latestEvent.outerAmount ? ' - ' + latestEvent.outerAmount : ''}</p>`;
+                                    }
+                                    if (latestEvent.innerChemical) {
+                                        eventDetails += `<p style="font-size: 0.85rem; color: rgba(230,238,246,0.7);">Inner: ${latestEvent.innerChemical}${latestEvent.innerAmount ? ' - ' + latestEvent.innerAmount : ''}</p>`;
+                                    }
+                                } else if (latestEvent.chemical) {
+                                    // Old schema
+                                    eventDetails = `
+                                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.7);">Chemical: ${latestEvent.chemical}</p>
+                                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.7);">Amount: ${latestEvent.amount}</p>
+                                    `;
+                                }
+                                
+                                eventInfo = `
+                                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(230,238,246,0.1);">
+                                        <p style="font-size: 0.9rem; color: rgba(230,238,246,0.8); margin-bottom: 4px;"><strong>Latest Event:</strong></p>
+                                        ${eventDetails}
+                                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6);">${eventDate ? 'Applied: ' + eventDate : ''}</p>
+                                    </div>
+                                `;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching latest event:', error);
+                    }
+                    
+                    card.innerHTML = `
+                        <h3>${tire.tireName}</h3>
+                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6);">
+                            ${timestamp ? 'Added: ' + timestamp : ''}
+                        </p>
+                        ${eventInfo}
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn" data-action="load-tire" data-tire-id="${tire.id}" style="flex: 1;">📥 Load</button>
+                            <button class="btn" data-action="delete-tire-individual" data-tire-id="${tire.id}" style="flex: 1; background: rgba(255,51,51,0.2); border-color: rgba(255,51,51,0.3);">🗑️ Delete</button>
+                        </div>
+                    `;
+                    tiresListDiv.appendChild(card);
+                }
+            }
+            
+            window.backToTireHistory = function() {
+                const tireHistorySection = document.querySelector('[data-section-content="tire-history"]');
+                const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                const addTireSetSection = document.querySelector('[data-section-content="add-tire-set"]');
+                
+                if (setDetailsSection) setDetailsSection.classList.remove('active');
+                if (addTireSetSection) addTireSetSection.classList.remove('active');
+                if (tireHistorySection) tireHistorySection.classList.add('active');
+            };
+            
+            // Add Tire Section Functions
+            const addTireBtn = document.getElementById('add-tire-btn');
+            const tireNameInput = document.getElementById('tire-name-input');
+            const confirmAddTireBtn = document.getElementById('confirm-add-tire-btn');
+            
+            async function openAddTireSection() {
+                // Check if tire limit reached
+                if (!window.currentTireSet || !window.currentTireSetId) {
+                    showAlert('No tire set selected.', 'Error', '❌');
+                    return;
+                }
+                
+                // Count current tires in the set
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'tires'),
+                    window.firebaseWhere('setId', '==', window.currentTireSetId),
+                    window.firebaseWhere('userId', '==', window.currentUser.uid)
+                );
+                const querySnapshot = await window.firebaseGetDocs(q);
+                const currentTireCount = querySnapshot.size;
+                
+                if (currentTireCount >= window.currentTireSet.quantity) {
+                    showAlert(`You have reached the maximum number of tires (${window.currentTireSet.quantity}) for this set.`, 'Limit Reached', '⚠️');
+                    return;
+                }
+                
+                const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                const addTireSection = document.querySelector('[data-section-content="add-tire"]');
+                const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                
+                if (setDetailsSection) setDetailsSection.classList.remove('active');
+                if (tireDetailsSection) tireDetailsSection.classList.remove('active');
+                if (addTireSection) {
+                    addTireSection.classList.add('active');
+                    if (tireNameInput) tireNameInput.value = '';
+                }
+            }
+            
+            window.backToSetDetails = function() {
+                const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                const addTireSection = document.querySelector('[data-section-content="add-tire"]');
+                const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                
+                if (addTireSection) addTireSection.classList.remove('active');
+                if (tireDetailsSection) tireDetailsSection.classList.remove('active');
+                if (setDetailsSection) setDetailsSection.classList.add('active');
+            };
+            
+            async function addTire() {
+                const tireName = tireNameInput.value.trim();
+                
+                if (!window.currentUser) {
+                    showAlert('Please log in to add tires.', 'Not Logged In', '⚠️');
+                    return;
+                }
+                
+                if (!tireName) {
+                    showAlert('Please enter a tire label/name.', 'Name Required', '⚠️');
+                    return;
+                }
+                
+                if (!window.currentTireSetId) {
+                    showAlert('No tire set selected.', 'Error', '❌');
+                    return;
+                }
+                
+                try {
+                    const newTire = {
+                        tireName: tireName,
+                        setId: window.currentTireSetId,
+                        userId: window.currentUser.uid,
+                        timestamp: Date.now()
+                    };
+                    await window.firebaseAddDoc(window.firebaseCollection(window.firebaseDb, 'tires'), newTire);
+                    
+                    const addTireSection = document.querySelector('[data-section-content="add-tire"]');
+                    const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                    if (addTireSection) addTireSection.classList.remove('active');
+                    if (setDetailsSection) setDetailsSection.classList.add('active');
+                    
+                    await renderTiresList(window.currentTireSetId);
+                } catch (error) {
+                    console.error('Error adding tire:', error);
+                    showAlert('Error adding tire. Please try again.', 'Error', '❌');
+                }
+            }
+            
+            if (addTireBtn) {
+                addTireBtn.addEventListener('click', openAddTireSection);
+            }
+            
+            if (confirmAddTireBtn) {
+                confirmAddTireBtn.addEventListener('click', addTire);
+            }
+            
+            // Define loadTireDetails and renderTireEvents functions BEFORE event handlers
+            async function loadTireDetails(tireId) {
+                console.log('loadTireDetails called with:', tireId);
+                // Find the tire in the database
+                if (!window.firebaseDb || !window.firebaseGetDoc || !window.firebaseDoc) {
+                    console.error('Firebase not available');
+                    return;
+                }
+                
+                try {
+                    const tireDoc = await window.firebaseGetDoc(window.firebaseDoc(window.firebaseDb, 'tires', tireId));
+                    if (!tireDoc.exists()) {
+                        console.error('Tire not found');
+                        return;
+                    }
+                    
+                    const tire = { id: tireDoc.id, ...tireDoc.data() };
+                    console.log('Loaded tire:', tire);
+                    window.currentTire = tire;
+                    window.currentTireId = tireId;
+                    
+                    // Navigate to tire details section
+                    const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                    const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                    const addTireSection = document.querySelector('[data-section-content="add-tire"]');
+                    
+                    console.log('Sections:', setDetailsSection, tireDetailsSection);
+                    
+                    if (setDetailsSection) setDetailsSection.classList.remove('active');
+                    if (addTireSection) addTireSection.classList.remove('active');
+                    if (tireDetailsSection) {
+                        tireDetailsSection.classList.add('active');
+                        
+                        // Update tire details info
+                        const tireDetailsInfo = document.getElementById('tire-details-info');
+                        if (tireDetailsInfo) tireDetailsInfo.innerHTML = `${tire.tireName}`;
+                        
+                        // Render tire events
+                        renderTireEvents(tireId);
+                    }
+                } catch (error) {
+                    console.error('Error loading tire:', error);
+                }
+            }
+            
+            async function renderTireEvents(tireId) {
+                const eventsListDiv = document.getElementById('tire-events-list');
+                if (!eventsListDiv) return;
+                
+                if (!window.firebaseDb || !window.firebaseGetDocs || !window.firebaseCollection) {
+                    eventsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Database not available.</p>';
+                    return;
+                }
+                
+                eventsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">Loading events...</p>';
+                
+                // Query events for current tire
+                const q = window.firebaseQuery(
+                    window.firebaseCollection(window.firebaseDb, 'tireEvents'),
+                    window.firebaseWhere('tireId', '==', tireId),
+                    window.firebaseWhere('userId', '==', window.currentUser.uid)
+                );
+                const querySnapshot = await window.firebaseGetDocs(q);
+                const events = [];
+                querySnapshot.forEach(doc => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                
+                eventsListDiv.innerHTML = '';
+                if (events.length === 0) {
+                    eventsListDiv.innerHTML = '<p style="color:rgba(230,238,246,0.7);text-align:center;">No events added yet.</p>';
+                    return;
+                }
+                
+                events.forEach((event) => {
+                    const card = document.createElement('div');
+                    card.className = 'instruction-card';
+                    card.style.textAlign = 'left';
+                    card.style.width = '100%';
+                    card.style.margin = '16px 0';
+                    card.style.background = 'rgba(230,238,246,0.05)';
+                    card.style.border = '1px solid rgba(230,238,246,0.15)';
+                    let timestamp = event.timestamp ? new Date(event.timestamp).toLocaleString() : '';
+                    
+                    // Handle both old and new schema
+                    let chemicalDisplay = '';
+                    if (event.outerChemical || event.innerChemical) {
+                        chemicalDisplay = `
+                            ${event.outerChemical ? `<p style="font-size: 0.95rem; color: rgba(230,238,246,0.8); margin-bottom: 4px;">
+                                <strong>Outer:</strong> ${event.outerChemical}${event.outerAmount ? ` - ${event.outerAmount}` : ''}
+                            </p>` : ''}
+                            ${event.innerChemical ? `<p style="font-size: 0.95rem; color: rgba(230,238,246,0.8); margin-bottom: 4px;">
+                                <strong>Inner:</strong> ${event.innerChemical}${event.innerAmount ? ` - ${event.innerAmount}` : ''}
+                            </p>` : ''}
+                        `;
+                    } else if (event.chemical) {
+                        // Old schema
+                        chemicalDisplay = `<p style="font-size: 0.95rem; color: rgba(230,238,246,0.8); margin-bottom: 4px;">
+                            <strong>Chemical:</strong> ${event.chemical}${event.amount ? ` - ${event.amount}` : ''}
+                        </p>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <h3>Event</h3>
+                        ${chemicalDisplay}
+                        ${event.description ? `<p style="font-size: 0.9rem; color: rgba(230,238,246,0.7); margin-top: 8px;">${event.description}</p>` : ''}
+                        <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6); margin-top: 8px;">
+                            ${timestamp ? 'Added: ' + timestamp : ''}
+                        </p>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn" data-action="view-event" data-event-id="${event.id}" style="flex: 1;">👁️ View</button>
+                            <button class="btn" data-action="edit-event" data-event-id="${event.id}" style="flex: 1;">✏️ Edit</button>
+                            <button class="btn" data-action="delete-event" data-event-id="${event.id}" style="flex: 1; background: rgba(255,51,51,0.2); border-color: rgba(255,51,51,0.3);">🗑️ Delete</button>
+                        </div>
+                    `;
+                    eventsListDiv.appendChild(card);
+                });
+            }
+            
+            // Handle tire actions - use document level delegation since tires-list gets recreated
+            document.body.addEventListener('click', async function(e) {
+                // Check if click is within tires-list
+                const tiresListDiv = document.getElementById('tires-list');
+                if (!tiresListDiv || !tiresListDiv.contains(e.target)) return;
+                
+                const btn = e.target.closest('button[data-action]');
+                if (!btn) return;
+                const action = btn.getAttribute('data-action');
+                const tireId = btn.getAttribute('data-tire-id');
+                
+                console.log('Tire button clicked:', action, tireId);
+                
+                if (action === 'load-tire' && tireId) {
+                    console.log('Loading tire details for:', tireId);
+                    await loadTireDetails(tireId);
+                } else if (action === 'delete-tire-individual' && tireId) {
+                    const confirmed = await showConfirm('Are you sure you want to delete this tire?', 'Delete Tire', '🗑️');
+                    if (confirmed) {
+                        try {
+                            await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tires', tireId));
+                            await renderTiresList(window.currentTireSetId);
+                        } catch (error) {
+                            console.error('Error deleting tire:', error);
+                            showAlert('Error deleting tire. Please try again.', 'Error', '❌');
+                        }
+                    }
+                }
+            });
+            
+            // Add Event Modal Functions
+            const addEventBtn = document.getElementById('add-event-btn');
+            const addEventModal = document.getElementById('add-event-modal');
+            const chemicalInput = document.getElementById('chemical-input');
+            const amountInput = document.getElementById('amount-input');
+            const descriptionInput = document.getElementById('description-input');
+            const confirmAddEventBtn = document.getElementById('confirm-add-event-btn');
+            
+            function openAddEventSection() {
+                // Navigate to add event section
+                const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                const addEventSection = document.querySelector('[data-section-content="add-event"]');
+                const viewEventSection = document.querySelector('[data-section-content="view-event"]');
+                const editEventSection = document.querySelector('[data-section-content="edit-event"]');
+                
+                if (tireDetailsSection) tireDetailsSection.classList.remove('active');
+                if (viewEventSection) viewEventSection.classList.remove('active');
+                if (editEventSection) editEventSection.classList.remove('active');
+                if (addEventSection) {
+                    addEventSection.classList.add('active');
+                    
+                    // Clear form
+                    const outerChemicalInput = document.getElementById('outer-chemical-input');
+                    const outerAmountInput = document.getElementById('outer-amount-input');
+                    const innerChemicalInput = document.getElementById('inner-chemical-input');
+                    const innerAmountInput = document.getElementById('inner-amount-input');
+                    const descriptionInput = document.getElementById('description-input');
+                    const applyToAllCheckbox = document.getElementById('apply-to-all-tires');
+                    
+                    if (outerChemicalInput) outerChemicalInput.value = '';
+                    if (outerAmountInput) outerAmountInput.value = '';
+                    if (innerChemicalInput) innerChemicalInput.value = '';
+                    if (innerAmountInput) innerAmountInput.value = '';
+                    if (descriptionInput) descriptionInput.value = '';
+                    if (applyToAllCheckbox) applyToAllCheckbox.checked = false;
+                }
+            }
+            
+            window.backToTireDetails = function() {
+                const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                const viewEventSection = document.querySelector('[data-section-content="view-event"]');
+                const editEventSection = document.querySelector('[data-section-content="edit-event"]');
+                const addEventSection = document.querySelector('[data-section-content="add-event"]');
+                const setDetailsSection = document.querySelector('[data-section-content="tire-set-details"]');
+                
+                if (viewEventSection) viewEventSection.classList.remove('active');
+                if (editEventSection) editEventSection.classList.remove('active');
+                if (addEventSection) addEventSection.classList.remove('active');
+                if (setDetailsSection) setDetailsSection.classList.remove('active');
+                if (tireDetailsSection) tireDetailsSection.classList.add('active');
+            };
+            
+            async function addEvent() {
+                const outerChemical = document.getElementById('outer-chemical-input').value.trim();
+                const outerAmount = document.getElementById('outer-amount-input').value.trim();
+                const innerChemical = document.getElementById('inner-chemical-input').value.trim();
+                const innerAmount = document.getElementById('inner-amount-input').value.trim();
+                const description = descriptionInput.value.trim();
+                const applyToAll = document.getElementById('apply-to-all-tires')?.checked || false;
+                
+                if (!window.currentUser) {
+                    showAlert('Please log in to add events.', 'Not Logged In', '⚠️');
+                    return;
+                }
+                
+                if (!window.currentTireId) {
+                    showAlert('No tire selected.', 'Error', '❌');
+                    return;
+                }
+                
+                try {
+                    const timestamp = Date.now();
+                    
+                    if (applyToAll && window.currentTire && window.currentTire.setId) {
+                        // Get all tires in the set
+                        const tiresQuery = window.firebaseQuery(
+                            window.firebaseCollection(window.firebaseDb, 'tires'),
+                            window.firebaseWhere('setId', '==', window.currentTire.setId),
+                            window.firebaseWhere('userId', '==', window.currentUser.uid)
+                        );
+                        const tiresSnapshot = await window.firebaseGetDocs(tiresQuery);
+                        
+                        // Add event to all tires in the set
+                        const promises = [];
+                        tiresSnapshot.forEach(doc => {
+                            const newEvent = {
+                                outerChemical: outerChemical,
+                                outerAmount: outerAmount,
+                                innerChemical: innerChemical,
+                                innerAmount: innerAmount,
+                                description: description,
+                                tireId: doc.id,
+                                userId: window.currentUser.uid,
+                                timestamp: timestamp
+                            };
+                            promises.push(window.firebaseAddDoc(window.firebaseCollection(window.firebaseDb, 'tireEvents'), newEvent));
+                        });
+                        
+                        await Promise.all(promises);
+                    } else {
+                        // Add new event to current tire only
+                        const newEvent = {
+                            outerChemical: outerChemical,
+                            outerAmount: outerAmount,
+                            innerChemical: innerChemical,
+                            innerAmount: innerAmount,
+                            description: description,
+                            tireId: window.currentTireId,
+                            userId: window.currentUser.uid,
+                            timestamp: timestamp
+                        };
+                        await window.firebaseAddDoc(window.firebaseCollection(window.firebaseDb, 'tireEvents'), newEvent);
+                    }
+                    
+                    // Navigate back to tire details
+                    const addEventSection = document.querySelector('[data-section-content="add-event"]');
+                    const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                    if (addEventSection) addEventSection.classList.remove('active');
+                    if (tireDetailsSection) tireDetailsSection.classList.add('active');
+                    
+                    await renderTireEvents(window.currentTireId);
+                } catch (error) {
+                    console.error('Error saving event:', error);
+                    showAlert('Error saving event. Please try again.', 'Error', '❌');
+                }
+            }
+            
+            async function updateEvent() {
+                const editOuterChemicalInput = document.getElementById('edit-outer-chemical-input');
+                const editOuterAmountInput = document.getElementById('edit-outer-amount-input');
+                const editInnerChemicalInput = document.getElementById('edit-inner-chemical-input');
+                const editInnerAmountInput = document.getElementById('edit-inner-amount-input');
+                const editDescriptionInput = document.getElementById('edit-description-input');
+                const confirmEditEventBtn = document.getElementById('confirm-edit-event-btn');
+                
+                const outerChemical = editOuterChemicalInput.value.trim();
+                const outerAmount = editOuterAmountInput.value.trim();
+                const innerChemical = editInnerChemicalInput.value.trim();
+                const innerAmount = editInnerAmountInput.value.trim();
+                const description = editDescriptionInput.value.trim();
+                const editingId = confirmEditEventBtn.dataset.editingId;
+                
+                if (!window.currentUser) {
+                    showAlert('Please log in to update events.', 'Not Logged In', '⚠️');
+                    return;
+                }
+                
+                try {
+                    // Update existing event
+                    const eventData = {
+                        outerChemical: outerChemical,
+                        outerAmount: outerAmount,
+                        innerChemical: innerChemical,
+                        innerAmount: innerAmount,
+                        description: description
+                    };
+                    await window.firebaseUpdateDoc(window.firebaseDoc(window.firebaseDb, 'tireEvents', editingId), eventData);
+                    delete confirmEditEventBtn.dataset.editingId;
+                    
+                    // Navigate back to tire details
+                    const editEventSection = document.querySelector('[data-section-content="edit-event"]');
+                    const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                    if (editEventSection) editEventSection.classList.remove('active');
+                    if (tireDetailsSection) tireDetailsSection.classList.add('active');
+                    
+                    await renderTireEvents(window.currentTireId);
+                } catch (error) {
+                    console.error('Error updating event:', error);
+                    showAlert('Error updating event. Please try again.', 'Error', '❌');
+                }
+            }
+            
+            if (addEventBtn) {
+                addEventBtn.addEventListener('click', openAddEventSection);
+            }
+            
+            if (confirmAddEventBtn) {
+                confirmAddEventBtn.addEventListener('click', addEvent);
+            }
+            
+            const confirmEditEventBtn = document.getElementById('confirm-edit-event-btn');
+            if (confirmEditEventBtn) {
+                confirmEditEventBtn.addEventListener('click', updateEvent);
+            }
+            
+            // Handle event actions with event delegation on events list
+            const eventsListDiv = document.getElementById('tire-events-list');
+            if (eventsListDiv) {
+                eventsListDiv.addEventListener('click', async function(e) {
+                    const btn = e.target.closest('button[data-action]');
+                    if (!btn) return;
+                    const action = btn.getAttribute('data-action');
+                    const eventId = btn.getAttribute('data-event-id');
+                    
+                    if (action === 'view-event' && eventId) {
+                        viewEventDetails(eventId);
+                    } else if (action === 'edit-event' && eventId) {
+                        editEventDetails(eventId);
+                    } else if (action === 'delete-event' && eventId) {
+                        const confirmed = await showConfirm('Are you sure you want to delete this event?', 'Delete Event', '🗑️');
+                        if (confirmed) {
+                            try {
+                                await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tireEvents', eventId));
+                                await renderTireEvents(window.currentTireId);
+                            } catch (error) {
+                                console.error('Error deleting event:', error);
+                                showAlert('Error deleting event. Please try again.', 'Error', '❌');
+                            }
+                        }
+                    }
+                });
+            }
+            
+            async function viewEventDetails(eventId) {
+                // Find the event data
+                const eventDoc = await window.firebaseGetDoc(window.firebaseDoc(window.firebaseDb, 'tireEvents', eventId));
+                if (!eventDoc.exists()) return;
+                
+                const event = eventDoc.data();
+                const timestamp = event.timestamp ? new Date(event.timestamp).toLocaleString() : '';
+                
+                // Navigate to view event section
+                const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                const viewEventSection = document.querySelector('[data-section-content="view-event"]');
+                const editEventSection = document.querySelector('[data-section-content="edit-event"]');
+                const addEventSection = document.querySelector('[data-section-content="add-event"]');
+                
+                if (tireDetailsSection) tireDetailsSection.classList.remove('active');
+                if (editEventSection) editEventSection.classList.remove('active');
+                if (addEventSection) addEventSection.classList.remove('active');
+                if (viewEventSection) {
+                    viewEventSection.classList.add('active');
+                    
+                    // Update view content
+                    const viewEventTitle = document.getElementById('view-event-title');
+                    const viewEventContent = document.getElementById('view-event-content');
+                    
+                    if (viewEventTitle) viewEventTitle.textContent = 'Event Details';
+                    if (viewEventContent) {
+                        // Handle both old and new schema
+                        let contentHTML = '';
+                        if (event.outerChemical || event.innerChemical) {
+                            // New schema
+                            if (event.outerChemical) {
+                                contentHTML += `
+                                <div style="margin-bottom: 16px;">
+                                    <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Outer Chemical:</strong>
+                                    <p style="font-size: 1.1rem; margin-top: 4px;">${event.outerChemical}</p>
+                                </div>`;
+                            }
+                            if (event.outerAmount) {
+                                contentHTML += `
+                                <div style="margin-bottom: 16px;">
+                                    <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Outer Amount:</strong>
+                                    <p style="font-size: 1.1rem; margin-top: 4px;">${event.outerAmount}</p>
+                                </div>`;
+                            }
+                            if (event.innerChemical) {
+                                contentHTML += `
+                                <div style="margin-bottom: 16px;">
+                                    <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Inner Chemical:</strong>
+                                    <p style="font-size: 1.1rem; margin-top: 4px;">${event.innerChemical}</p>
+                                </div>`;
+                            }
+                            if (event.innerAmount) {
+                                contentHTML += `
+                                <div style="margin-bottom: 16px;">
+                                    <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Inner Amount:</strong>
+                                    <p style="font-size: 1.1rem; margin-top: 4px;">${event.innerAmount}</p>
+                                </div>`;
+                            }
+                        } else if (event.chemical) {
+                            // Old schema
+                            contentHTML += `
+                            <div style="margin-bottom: 16px;">
+                                <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Chemical:</strong>
+                                <p style="font-size: 1.1rem; margin-top: 4px;">${event.chemical}</p>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Amount:</strong>
+                                <p style="font-size: 1.1rem; margin-top: 4px;">${event.amount}</p>
+                            </div>`;
+                        }
+                        
+                        viewEventContent.innerHTML = `
+                            ${contentHTML}
+                            ${event.description ? `
+                            <div style="margin-bottom: 16px;">
+                                <strong style="color: rgba(230,238,246,0.6); font-size: 0.9rem;">Description:</strong>
+                                <p style="font-size: 1rem; margin-top: 4px; line-height: 1.5;">${event.description}</p>
+                            </div>
+                            ` : ''}
+                            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(230,238,246,0.15);">
+                                <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6);">
+                                    Added: ${timestamp}
+                                </p>
+                            </div>
+                        `;
+                    }
+                }
+            }
+            
+            async function editEventDetails(eventId) {
+                // Find the event data
+                const eventDoc = await window.firebaseGetDoc(window.firebaseDoc(window.firebaseDb, 'tireEvents', eventId));
+                if (!eventDoc.exists()) return;
+                
+                const event = eventDoc.data();
+                
+                // Navigate to edit event section
+                const tireDetailsSection = document.querySelector('[data-section-content="tire-details"]');
+                const editEventSection = document.querySelector('[data-section-content="edit-event"]');
+                const viewEventSection = document.querySelector('[data-section-content="view-event"]');
+                const addEventSection = document.querySelector('[data-section-content="add-event"]');
+                
+                if (tireDetailsSection) tireDetailsSection.classList.remove('active');
+                if (viewEventSection) viewEventSection.classList.remove('active');
+                if (addEventSection) addEventSection.classList.remove('active');
+                if (editEventSection) {
+                    editEventSection.classList.add('active');
+                    
+                    // Fill edit form with event data
+                    const editOuterChemicalInput = document.getElementById('edit-outer-chemical-input');
+                    const editOuterAmountInput = document.getElementById('edit-outer-amount-input');
+                    const editInnerChemicalInput = document.getElementById('edit-inner-chemical-input');
+                    const editInnerAmountInput = document.getElementById('edit-inner-amount-input');
+                    const editDescriptionInput = document.getElementById('edit-description-input');
+                    const confirmEditEventBtn = document.getElementById('confirm-edit-event-btn');
+                    
+                    // Handle both old and new schema
+                    if (editOuterChemicalInput) editOuterChemicalInput.value = event.outerChemical || event.chemical || '';
+                    if (editOuterAmountInput) editOuterAmountInput.value = event.outerAmount || event.amount || '';
+                    if (editInnerChemicalInput) editInnerChemicalInput.value = event.innerChemical || '';
+                    if (editInnerAmountInput) editInnerAmountInput.value = event.innerAmount || '';
+                    if (editDescriptionInput) editDescriptionInput.value = event.description || '';
+                    if (confirmEditEventBtn) confirmEditEventBtn.dataset.editingId = eventId;
+                }
+            }
+        }
+        setupTireHistory();
+
     // --- Modal Utilities ---
     function showAlert(message, title = 'Alert', icon = 'ℹ️') {
         return new Promise(resolve => {
@@ -915,6 +2116,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const activeButton = document.querySelector(`[data-section="${sectionName}"]`);
             if (activeSection) activeSection.classList.add('active');
             if (activeButton) activeButton.classList.add('active');
+            
+            // Scroll container to top when switching sections
+            const appContainer = document.querySelector('.app-container');
+            if (appContainer) appContainer.scrollTop = 0;
 
             // Reset Build section to show choice menu when navigating to it
             if (sectionName === 'build') {
@@ -933,6 +2138,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Trigger the track list rendering
                 const renderTrackListEvent = new CustomEvent('loadTrackHistory');
                 window.dispatchEvent(renderTrackListEvent);
+            }
+            
+            // Load tire sets when Tire History is clicked
+            if (sectionName === 'tire-history') {
+                // Trigger the tire set list rendering
+                const renderTireSetListEvent = new CustomEvent('loadTireHistory');
+                window.dispatchEvent(renderTireSetListEvent);
             }
         }
 

@@ -278,23 +278,19 @@
                 <button class="btn primary" id="add-track-btn" style="margin-bottom: 16px;">Add Track</button>
                 <div id="track-list" style="position: relative; z-index: 1;"></div>
             </div>
-            <!-- Add Track Modal -->
-            <div id="add-track-modal" style="display: none; position: fixed; top: calc(50% + 120px); left: 50%; transform: translate(-50%, -50%); z-index: 20000;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Add New Track</h3>
-                        <button class="modal-close" onclick="closeAddTrackModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <label for="track-name-input">Track Name:</label>
-                        <input type="text" id="track-name-input" class="setup-input" placeholder="Enter track name..." style="max-width: 100%; margin-top: 8px;">
-                        <label for="track-location-input" style="margin-top:12px;display:block;">Location:</label>
-                        <input type="text" id="track-location-input" class="setup-input" placeholder="Enter location..." style="max-width: 100%; margin-top: 8px;">
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" onclick="closeAddTrackModal()" style="background: rgba(255,255,255,0.05);">Cancel</button>
-                        <button class="btn primary" id="confirm-add-track-btn">Add Track</button>
-                    </div>
+        </div>
+
+        <!-- Add Track Section -->
+        <div class="app-section" data-section-content="add-track">
+            <button class="btn" onclick="backToTrackHistory()" style="margin-bottom: 16px;">← Back to Tracks</button>
+            <h2>Add Track</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <label for="track-name-input">Track Name:</label>
+                    <input type="text" id="track-name-input" class="setup-input" placeholder="Enter track name..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="track-location-input" style="margin-top:12px;display:block;">Location:</label>
+                    <input type="text" id="track-location-input" class="setup-input" placeholder="Enter location..." style="max-width: 100%; margin-top: 8px;">
+                    <button class="btn primary" id="confirm-add-track-btn" style="margin-top: 16px;">Add Track</button>
                 </div>
             </div>
         </div>
@@ -306,7 +302,11 @@
                 <h2 id="track-details-title">Track Details</h2>
             </div>
             <div class="section-content">
-                <button class="btn primary" id="add-day-btn" style="margin-bottom: 16px;">Add Day</button>
+                <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <button class="btn primary" id="add-day-btn" style="flex: 1; min-width: 150px;">📅 Add Day</button>
+                    <button class="btn" id="track-settings-btn" style="flex: 1; min-width: 150px;">⚙️ Track Settings</button>
+                    <button class="btn" id="points-standings-btn" style="flex: 1; min-width: 150px;">🏆 Points Standings</button>
+                </div>
                 <div id="day-list"></div>
             </div>
         </div>
@@ -519,12 +519,168 @@
             </div>
         </div>
 
+        <!-- Track Settings Section -->
+        <div class="app-section" data-section-content="track-settings" style="display:none;">
+            <button class="btn" onclick="backToTrackDetails()" style="margin-bottom: 16px;">← Back to Track</button>
+            <h2 id="track-settings-title">Track Settings</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <label for="track-settings-name">Track Name:</label>
+                    <input type="text" id="track-settings-name" class="setup-input" placeholder="Track name..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="track-settings-location" style="margin-top:12px;display:block;">Location:</label>
+                    <input type="text" id="track-settings-location" class="setup-input" placeholder="City, State/Country..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="track-settings-notes" style="margin-top:12px;display:block;">Notes:</label>
+                    <textarea id="track-settings-notes" class="setup-input" placeholder="Additional notes about this track..." style="max-width: 100%; margin-top: 8px; min-height: 100px; resize: vertical;"></textarea>
+                    <button class="btn primary" id="save-track-settings-btn" style="margin-top: 16px;">💾 Save Settings</button>
+                    <button class="btn" id="delete-track-btn" style="margin-top: 16px; margin-left: 8px; background: rgba(255,51,51,0.2); border-color: rgba(255,51,51,0.3);">🗑️ Delete Track</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Points Standings Section -->
+        <div class="app-section" data-section-content="points-standings" style="display:none;">
+            <button class="btn" onclick="backToTrackDetails()" style="margin-bottom: 16px;">← Back to Track</button>
+            <h2 id="points-standings-title">Points Standings</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <p style="color: rgba(230,238,246,0.7); margin-bottom: 16px;">Track your points and standings for this track's racing season.</p>
+                    <label for="total-points-input">Total Points:</label>
+                    <input type="number" id="total-points-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
+                    <label for="current-position-input" style="margin-top:12px;display:block;">Current Position:</label>
+                    <input type="number" id="current-position-input" class="setup-input" placeholder="e.g., 1, 2, 3..." min="1" style="max-width: 100%; margin-top: 8px;">
+                    <label for="races-entered-input" style="margin-top:12px;display:block;">Races Entered:</label>
+                    <input type="number" id="races-entered-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
+                    <label for="wins-input" style="margin-top:12px;display:block;">Wins:</label>
+                    <input type="number" id="wins-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
+                    <label for="podiums-input" style="margin-top:12px;display:block;">Podium Finishes (Top 3):</label>
+                    <input type="number" id="podiums-input" class="setup-input" placeholder="0" min="0" style="max-width: 100%; margin-top: 8px;">
+                    <label for="standings-notes" style="margin-top:12px;display:block;">Season Notes:</label>
+                    <textarea id="standings-notes" class="setup-input" placeholder="Season highlights, goals, etc..." style="max-width: 100%; margin-top: 8px; min-height: 100px; resize: vertical;"></textarea>
+                    <button class="btn primary" id="save-standings-btn" style="margin-top: 16px;">💾 Save Standings</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Tire History Section -->
         <div class="app-section" data-section-content="tire-history">
             <h2>Tire History</h2>
             <p>View and manage your tire usage and history.</p>
             <div class="section-content">
-                <p>Tire history feature coming soon...</p>
+                <button class="btn primary" id="add-tire-set-btn" style="margin-bottom: 16px;">Add Set (1-4 Tires)</button>
+                <div id="tire-set-list" style="position: relative; z-index: 1;"></div>
+            </div>
+        </div>
+
+        <!-- Add Tire Set Section -->
+        <div class="app-section" data-section-content="add-tire-set">
+            <button class="btn" onclick="backToTireHistory()" style="margin-bottom: 16px;">← Back to Tire Sets</button>
+            <h2>Add Tire Set</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <label for="tire-set-name-input">Set Name:</label>
+                    <input type="text" id="tire-set-name-input" class="setup-input" placeholder="e.g., Front Race Set, Spare Rears..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="tire-brand-input" style="margin-top:12px;display:block;">Brand:</label>
+                    <input type="text" id="tire-brand-input" class="setup-input" placeholder="e.g., MG, Bridgestone, Hoosier..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="tire-model-input" style="margin-top:12px;display:block;">Tire Model:</label>
+                    <input type="text" id="tire-model-input" class="setup-input" placeholder="e.g., Red, Yellow, CIK..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="tire-quantity-input" style="margin-top:12px;display:block;">Number of Tires in Set (1-4):</label>
+                    <input type="number" id="tire-quantity-input" class="setup-input" placeholder="1-4" min="1" max="4" value="4" style="max-width: 100%; margin-top: 8px;">
+                    <button class="btn primary" id="confirm-add-tire-set-btn" style="margin-top: 16px;">Add Tire Set</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tire Set Details Section -->
+        <div class="app-section" data-section-content="tire-set-details">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <button class="btn" onclick="backToTireHistory()">← Back to Tire Sets</button>
+                <span id="tire-set-details-info" style="color: rgba(230,238,246,0.9); font-size: 1.1rem;"></span>
+            </div>
+            <div class="section-content">
+                <button class="btn primary" id="add-tire-btn" style="margin-bottom: 16px;">Add Tire</button>
+                <div id="tires-list" style="position: relative; z-index: 1;"></div>
+            </div>
+        </div>
+
+        <!-- Add Tire Section -->
+        <div class="app-section" data-section-content="add-tire">
+            <button class="btn" onclick="backToSetDetails()" style="margin-bottom: 16px;">← Back to Set</button>
+            <h2>Add Tire</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <label for="tire-name-input">Tire Label/Name:</label>
+                    <input type="text" id="tire-name-input" class="setup-input" placeholder="e.g., LF #1, RR Main, Front Left..." style="max-width: 100%; margin-top: 8px;">
+                    <button class="btn primary" id="confirm-add-tire-btn" style="margin-top: 16px;">Add Tire</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Individual Tire Details Section -->
+        <div class="app-section" data-section-content="tire-details">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <button class="btn" onclick="backToSetDetails()">← Back to Set</button>
+                <span id="tire-details-info" style="color: rgba(230,238,246,0.9); font-size: 1.1rem;"></span>
+            </div>
+            <div class="section-content">
+                <button class="btn primary" id="add-event-btn" style="margin-bottom: 16px;">Add Event</button>
+                <div id="tire-events-list" style="position: relative; z-index: 1;"></div>
+            </div>
+        </div>
+
+        <!-- View Event Section -->
+        <div class="app-section" data-section-content="view-event">
+            <button class="btn" onclick="backToTireDetails()" style="margin-bottom: 16px;">← Back to Tire</button>
+            <h2 id="view-event-title">Event Details</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <div id="view-event-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Event Section -->
+        <div class="app-section" data-section-content="edit-event">
+            <button class="btn" onclick="backToTireDetails()" style="margin-bottom: 16px;">← Back to Tire</button>
+            <h2>Edit Event</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <label for="edit-outer-chemical-input">Outer Chemical Applied:</label>
+                    <input type="text" id="edit-outer-chemical-input" class="setup-input" placeholder="e.g., Goat Pee, Simple Green, PRW..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="edit-outer-amount-input" style="margin-top:12px;display:block;">Outer Amount:</label>
+                    <input type="text" id="edit-outer-amount-input" class="setup-input" placeholder="e.g., 2 oz, 50ml, 3 coats..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="edit-inner-chemical-input" style="margin-top:12px;display:block;">Inner Chemical Applied:</label>
+                    <input type="text" id="edit-inner-chemical-input" class="setup-input" placeholder="e.g., Goat Pee, Simple Green, PRW..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="edit-inner-amount-input" style="margin-top:12px;display:block;">Inner Amount:</label>
+                    <input type="text" id="edit-inner-amount-input" class="setup-input" placeholder="e.g., 2 oz, 50ml, 3 coats..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="edit-description-input" style="margin-top:12px;display:block;">Description (Optional):</label>
+                    <textarea id="edit-description-input" class="setup-input" placeholder="Additional details..." style="max-width: 100%; margin-top: 8px; min-height: 80px; resize: vertical;"></textarea>
+                    <button class="btn primary" id="confirm-edit-event-btn" style="margin-top: 16px;">Update Event</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Event Section -->
+        <div class="app-section" data-section-content="add-event">
+            <button class="btn" onclick="backToTireDetails()" style="margin-bottom: 16px;">← Back to Tire</button>
+            <h2>Add Event</h2>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px;">
+                    <label for="outer-chemical-input">Outer Chemical Applied:</label>
+                    <input type="text" id="outer-chemical-input" class="setup-input" placeholder="e.g., Goat Pee, Simple Green, PRW..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="outer-amount-input" style="margin-top:12px;display:block;">Outer Amount:</label>
+                    <input type="text" id="outer-amount-input" class="setup-input" placeholder="e.g., 2 oz, 50ml, 3 coats..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="inner-chemical-input" style="margin-top:12px;display:block;">Inner Chemical Applied:</label>
+                    <input type="text" id="inner-chemical-input" class="setup-input" placeholder="e.g., Goat Pee, Simple Green, PRW..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="inner-amount-input" style="margin-top:12px;display:block;">Inner Amount:</label>
+                    <input type="text" id="inner-amount-input" class="setup-input" placeholder="e.g., 2 oz, 50ml, 3 coats..." style="max-width: 100%; margin-top: 8px;">
+                    <label for="description-input" style="margin-top:12px;display:block;">Description (Optional):</label>
+                    <textarea id="description-input" class="setup-input" placeholder="Additional details..." style="max-width: 100%; margin-top: 8px; min-height: 80px; resize: vertical;"></textarea>
+                    <div style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="apply-to-all-tires" style="width: auto; cursor: pointer;">
+                        <label for="apply-to-all-tires" style="margin: 0; cursor: pointer; color: rgba(230,238,246,0.9);">Apply to all tires in set</label>
+                    </div>
+                    <button class="btn primary" id="confirm-add-event-btn" style="margin-top: 16px;">Add Event</button>
+                </div>
             </div>
         </div>
 
@@ -618,7 +774,7 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, updateDoc, doc, query, where, orderBy, Timestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         // Your Firebase configuration
@@ -642,6 +798,7 @@
         window.firebaseCollection = collection;
         window.firebaseAddDoc = addDoc;
         window.firebaseGetDocs = getDocs;
+        window.firebaseGetDoc = getDoc;
         window.firebaseDeleteDoc = deleteDoc;
         window.firebaseUpdateDoc = updateDoc;
         window.firebaseDoc = doc;
