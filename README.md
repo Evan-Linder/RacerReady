@@ -2,6 +2,8 @@
 
 The ultimate go-kart management platform for racers who demand precision, performance, and results.
 
+**Live Site:** [racer-ready.vercel.app](https://racer-ready.vercel.app)
+
 ## Features
 
 ✅ **Track Your Performance** - Monitor your kart's performance with precision across multiple tracks and race days  
