@@ -3,7 +3,7 @@
     "version": 2,
     "public": true,
     "buildCommand": "echo 'Build complete'",
-    "outputDirectory": ".",
+    "outputDirectory": "public",
     "rewrites": [
         {
             "source": "/(.*)",
