@@ -142,6 +142,8 @@ body::before {
 .side-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
 
 @media (max-width: 900px) {
+    /* Hide floating logo panel on mobile to prevent scroll jitter */
+    .logo-above-panel { display: none; }
     .side-panel { display:none; }
 }
 
