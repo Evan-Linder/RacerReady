@@ -80,6 +80,11 @@
                     <h3>Saved Builds</h3>
                     <p>Access and manage your saved kart configurations</p>
                 </div>
+                <div class="instruction-card" data-card="bug-report">
+                    <div class="instruction-icon">🐛</div>
+                    <h3>Report a Bug</h3>
+                    <p>Help us improve by reporting any issues</p>
+                </div>
             </div>
         </div>
 
@@ -581,7 +586,7 @@
             <div class="section-content">
                 <div
                     style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; margin-bottom: 16px;">
-                    <h3 style="margin: 0 0 8px 0; color: rgba(230,238,246,0.9);">Total Points: <span
+                    <h3 style="margin: 0 0 8px 0; color: #ffffff;">Total Points: <span
                             id="total-points-display">0</span></h3>
                 </div>
                 <div id="points-standings-list">
@@ -631,7 +636,7 @@
         <div class="app-section" data-section-content="tire-set-details">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
                 <button class="btn" onclick="backToTireHistory()">← Back to Tire Sets</button>
-                <span id="tire-set-details-info" style="color: rgba(230,238,246,0.9); font-size: 1.1rem;"></span>
+                <span id="tire-set-details-info" style="color: #ffffff; font-size: 1.1rem;"></span>
             </div>
             <div class="section-content">
                 <button class="btn primary" id="add-tire-btn" style="margin-bottom: 16px;">Add Tire</button>
@@ -658,7 +663,7 @@
         <div class="app-section" data-section-content="tire-details">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
                 <button class="btn" onclick="backToSetDetails()">← Back to Set</button>
-                <span id="tire-details-info" style="color: rgba(230,238,246,0.9); font-size: 1.1rem;"></span>
+                <span id="tire-details-info" style="color: #ffffff; font-size: 1.1rem;"></span>
             </div>
             <div class="section-content">
                 <button class="btn primary" id="add-event-btn" style="margin-bottom: 16px;">Add Event</button>
@@ -735,7 +740,7 @@
                     <div style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
                         <input type="checkbox" id="apply-to-all-tires" style="width: auto; cursor: pointer;">
                         <label for="apply-to-all-tires"
-                            style="margin: 0; cursor: pointer; color: rgba(230,238,246,0.9);">Apply to all tires in
+                            style="margin: 0; cursor: pointer; color: #ffffff;">Apply to all tires in
                             set</label>
                     </div>
                     <button class="btn primary" id="confirm-add-event-btn" style="margin-top: 16px;">Add Event</button>
@@ -758,13 +763,13 @@
             <p>Help us improve! Please describe any issues you encounter.</p>
             <div class="section-content">
                 <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; max-width: 600px;">
-                    <label for="bug-title-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-title-input" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Bug Title <span style="color: #ff3333;">*</span>
                     </label>
                     <input type="text" id="bug-title-input" class="setup-input" placeholder="Brief description of the bug..."
                         style="max-width: 100%; margin-bottom: 16px;">
 
-                    <label for="bug-category-select" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-category-select" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Category <span style="color: #ff3333;">*</span>
                     </label>
                     <select id="bug-category-select" class="setup-input" style="max-width: 100%; margin-bottom: 16px;">
@@ -779,7 +784,7 @@
                         <option value="other">Other</option>
                     </select>
 
-                    <label for="bug-severity-select" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-severity-select" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Severity
                     </label>
                     <select id="bug-severity-select" class="setup-input" style="max-width: 100%; margin-bottom: 16px;">
@@ -789,25 +794,25 @@
                         <option value="critical">Critical - App breaking</option>
                     </select>
 
-                    <label for="bug-description-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-description-input" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Description <span style="color: #ff3333;">*</span>
                     </label>
                     <textarea id="bug-description-input" class="setup-input" placeholder="Detailed description of the bug, steps to reproduce, and expected behavior..."
                         style="max-width: 100%; margin-bottom: 16px; min-height: 100px; resize: vertical;"></textarea>
 
-                    <label for="bug-steps-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-steps-input" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Steps to Reproduce
                     </label>
                     <textarea id="bug-steps-input" class="setup-input" placeholder="1. Step one&#10;2. Step two&#10;3. Step three..."
                         style="max-width: 100%; margin-bottom: 16px; min-height: 80px; resize: vertical;"></textarea>
 
-                    <label for="bug-expected-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-expected-input" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Expected Behavior
                     </label>
                     <input type="text" id="bug-expected-input" class="setup-input" placeholder="What should happen instead..."
                         style="max-width: 100%; margin-bottom: 16px;">
 
-                    <label for="bug-environment-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                    <label for="bug-environment-input" style="display: block; color: #f0f0f0; font-weight: 500; margin-bottom: 8px;">
                         Environment (Browser, Device)
                     </label>
                     <input type="text" id="bug-environment-input" class="setup-input" placeholder="e.g., Chrome on Windows 10, Safari on iPhone..."
@@ -838,7 +843,7 @@
                 <label for="build-name-input">Build Name:</label>
                 <input type="text" id="build-name-input" class="setup-input"
                     placeholder="Enter a name for your build..." style="max-width: 100%; margin-top: 8px;">
-                <p style="font-size: 0.85rem; color: rgba(230,238,246,0.6); margin-top: 12px;">
+                <p style="font-size: 0.85rem; color: #a0a0a0; margin-top: 12px;">
                     This will save all current settings and configurations.
                 </p>
             </div>

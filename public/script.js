@@ -227,9 +227,30 @@ function setupTrackHistory() {
             const id = btn.getAttribute('data-id');
             if (btn.getAttribute('data-action') === 'delete') {
                 showConfirm('Delete this track?', 'Delete Track', '⚠️').then(async ok => {
-                    if (ok && window.firebaseDb && window.firebaseDeleteDoc && window.firebaseDoc) {
-                        await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tracks', id));
-                        await renderTrackList();
+                    if (ok) {
+                        try {
+                            console.log('Attempting to delete track:', id);
+                            if (window.firebaseDb && window.firebaseDeleteDoc && window.firebaseDoc) {
+                                const docRef = window.firebaseDoc(window.firebaseDb, 'tracks', id);
+                                console.log('Document reference:', docRef);
+                                await window.firebaseDeleteDoc(docRef);
+                                console.log('Track deleted successfully');
+                                showAlert('Track deleted successfully!', 'Deleted', '🗑️');
+                                await renderTrackList();
+                            } else {
+                                console.error('Firebase functions not initialized:', {
+                                    db: !!window.firebaseDb,
+                                    deleteDoc: !!window.firebaseDeleteDoc,
+                                    doc: !!window.firebaseDoc
+                                });
+                                showAlert('Firebase not initialized.', 'Error', '❌');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting track:', error);
+                            console.error('Error code:', error.code);
+                            console.error('Error message:', error.message);
+                            showAlert(`Error deleting track: ${error.message}`, 'Error', '❌');
+                        }
                     }
                 });
             } else if (btn.getAttribute('data-action') === 'load') {
@@ -361,9 +382,19 @@ function setupTrackHistory() {
                 await editDay(id);
             } else if (action === 'delete-day') {
                 showConfirm('Delete this day entry?', 'Delete Day', '⚠️').then(async ok => {
-                    if (ok && window.firebaseDb && window.firebaseDeleteDoc && window.firebaseDoc) {
-                        await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'days', id));
-                        await renderDayList();
+                    if (ok) {
+                        try {
+                            if (window.firebaseDb && window.firebaseDeleteDoc && window.firebaseDoc) {
+                                await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'days', id));
+                                showAlert('Day entry deleted successfully!', 'Deleted', '🗑️');
+                                await renderDayList();
+                            } else {
+                                showAlert('Firebase not initialized.', 'Error', '❌');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting day:', error);
+                            showAlert('Error deleting day entry. Please try again.', 'Error', '❌');
+                        }
                     }
                 });
             }
@@ -1017,6 +1048,7 @@ function setupTrackHistory() {
                 if (trackSettingsSection) trackSettingsSection.classList.remove('active');
                 if (trackHistorySection) trackHistorySection.classList.add('active');
 
+                showAlert('Track and all associated days deleted successfully!', 'Deleted', '🗑️');
                 await renderTrackList();
             } catch (error) {
                 console.error('Error deleting track:', error);
@@ -1226,6 +1258,7 @@ function setupTireHistory() {
                 if (confirmed) {
                     try {
                         await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tireSets', id));
+                        showAlert('Tire set deleted successfully!', 'Deleted', '🗑️');
                         await renderTireSetList();
                     } catch (error) {
                         console.error('Error deleting tire set:', error);
@@ -1631,6 +1664,7 @@ function setupTireHistory() {
             if (confirmed) {
                 try {
                     await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tires', tireId));
+                    showAlert('Tire deleted successfully!', 'Deleted', '🗑️');
                     await renderTiresList(window.currentTireSetId);
                 } catch (error) {
                     console.error('Error deleting tire:', error);
@@ -1843,6 +1877,7 @@ function setupTireHistory() {
                 if (confirmed) {
                     try {
                         await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'tireEvents', eventId));
+                        showAlert('Event deleted successfully!', 'Deleted', '🗑️');
                         await renderTireEvents(window.currentTireId);
                     } catch (error) {
                         console.error('Error deleting event:', error);
@@ -2014,13 +2049,18 @@ function showAlert(message, title = 'Alert', icon = 'ℹ️') {
             messageEl.textContent = message;
             modal.style.display = 'flex';
             modal.dataset.resolve = resolve;
+            
+            function handler() {
+                closeAlertModal();
+                resolve();
+            }
+            
+            const okBtn = modal.querySelector('.btn.primary');
+            const closeBtn = modal.querySelector('.modal-close');
+            
+            if (okBtn) okBtn.onclick = handler;
+            if (closeBtn) closeBtn.onclick = handler;
         }
-        function handler() {
-            closeAlertModal();
-            resolve();
-        }
-        modal.querySelector('.btn.primary').onclick = handler;
-        modal.querySelector('.modal-close').onclick = handler;
     });
 }
 function closeAlertModal() {
@@ -2063,12 +2103,16 @@ function showConfirm(message, title = 'Confirm', icon = '❓') {
             messageEl.textContent = message;
             modal.style.display = 'flex';
             modal.dataset.resolve = resolve;
+            
+            function ok() { closeConfirmModal(true); resolve(true); }
+            function cancel() { closeConfirmModal(false); resolve(false); }
+            
+            const okBtn = modal.querySelector('.btn.primary');
+            const closeBtn = modal.querySelector('.modal-close');
+            
+            if (okBtn) okBtn.onclick = ok;
+            if (closeBtn) closeBtn.onclick = cancel;
         }
-        function ok() { closeConfirmModal(true); resolve(true); }
-        function cancel() { closeConfirmModal(false); resolve(false); }
-        modal.querySelector('.btn.primary').onclick = ok;
-        modal.querySelector('.btn:not(.primary)').onclick = cancel;
-        modal.querySelector('.modal-close').onclick = cancel;
     });
 }
 function closeConfirmModal(result) {
@@ -2083,23 +2127,27 @@ function showSaveBuildModal() {
             input.value = '';
             modal.style.display = 'flex';
             input.focus();
-        }
-        function save() {
-            const name = input.value.trim();
-            if (!name) {
-                showAlert('Please enter a name for your build.', 'Missing Name', '⚠️');
-                return;
+            
+            function save() {
+                const name = input.value.trim();
+                if (!name) {
+                    showAlert('Please enter a name for your build.', 'Missing Name', '⚠️');
+                    return;
+                }
+                closeSaveBuildModal();
+                resolve(name);
             }
-            closeSaveBuildModal();
-            resolve(name);
+            function cancel() {
+                closeSaveBuildModal();
+                resolve(null);
+            }
+            
+            const saveBtn = modal.querySelector('.btn.primary');
+            const closeBtn = modal.querySelector('.modal-close');
+            
+            if (saveBtn) saveBtn.onclick = save;
+            if (closeBtn) closeBtn.onclick = cancel;
         }
-        function cancel() {
-            closeSaveBuildModal();
-            resolve(null);
-        }
-        modal.querySelector('.btn.primary').onclick = save;
-        modal.querySelector('.btn:not(.primary)').onclick = cancel;
-        modal.querySelector('.modal-close').onclick = cancel;
     });
 }
 function closeSaveBuildModal() {
@@ -3023,16 +3071,28 @@ document.addEventListener('DOMContentLoaded', function () {
          * Shows success message to user.
          */
         if (!window.firebaseDb || !window.firebaseDeleteDoc || !window.firebaseDoc) {
+            console.error('Firebase not properly initialized for delete:', {
+                db: !!window.firebaseDb,
+                deleteDoc: !!window.firebaseDeleteDoc,
+                doc: !!window.firebaseDoc
+            });
             showAlert('Firebase not initialized yet.', 'Error', '❌');
             return;
         }
 
         try {
-            await window.firebaseDeleteDoc(window.firebaseDoc(window.firebaseDb, 'builds', buildId));
+            console.log('Attempting to delete build:', buildId);
+            const docRef = window.firebaseDoc(window.firebaseDb, 'builds', buildId);
+            console.log('Document reference created:', docRef.path);
+            await window.firebaseDeleteDoc(docRef);
+            console.log('Build deleted successfully from Firestore');
             showAlert('Build deleted successfully!', 'Deleted', '🗑️');
         } catch (error) {
             console.error('Error deleting build:', error);
-            showAlert('Error deleting build. Check console for details.', 'Error', '❌');
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
+            console.error('Full error:', error);
+            showAlert(`Error deleting build: ${error.message}`, 'Error', '❌');
         }
     }
 

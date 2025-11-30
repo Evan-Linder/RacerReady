@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if document belongs to current user
+    function isUserDocument() {
+      return resource.data.userId == request.auth.uid;
+    }
+
+    // Helper function for new documents
+    function isNewUserDocument() {
+      return request.resource.data.userId == request.auth.uid;
+    }
+
+    // ==================== TRACKS ====================
+    match /tracks/{trackId} {
+      // Users can read their own tracks
+      allow read: if isAuthenticated() && isUserDocument();
+      
+      // Users can create tracks with their userId
+      allow create: if isAuthenticated() && isNewUserDocument();
+      
+      // Users can update their own tracks
+      allow update: if isAuthenticated() && isUserDocument();
+      
+      // Users can delete their own tracks
+      allow delete: if isAuthenticated() && isUserDocument();
+      
+      // ==================== DAYS (subcollection) ====================
+      match /days/{dayId} {
+        allow read: if isAuthenticated() && isUserDocument();
+        allow create: if isAuthenticated() && isNewUserDocument();
+        allow update: if isAuthenticated() && isUserDocument();
+        allow delete: if isAuthenticated() && isUserDocument();
+      }
+    }
+
+    // ==================== DAYS (top-level) ====================
+    match /days/{dayId} {
+      allow read: if isAuthenticated() && isUserDocument();
+      allow create: if isAuthenticated() && isNewUserDocument();
+      allow update: if isAuthenticated() && isUserDocument();
+      allow delete: if isAuthenticated() && isUserDocument();
+    }
+
+    // ==================== TIRE SETS ====================
+    match /tireSets/{tireSetId} {
+      allow read: if isAuthenticated() && isUserDocument();
+      allow create: if isAuthenticated() && isNewUserDocument();
+      allow update: if isAuthenticated() && isUserDocument();
+      allow delete: if isAuthenticated() && isUserDocument();
+    }
+
+    // ==================== TIRES ====================
+    match /tires/{tireId} {
+      allow read: if isAuthenticated() && isUserDocument();
+      allow create: if isAuthenticated() && isNewUserDocument();
+      allow update: if isAuthenticated() && isUserDocument();
+      allow delete: if isAuthenticated() && isUserDocument();
+    }
+
+    // ==================== TIRE EVENTS ====================
+    match /tireEvents/{eventId} {
+      allow read: if isAuthenticated() && isUserDocument();
+      allow create: if isAuthenticated() && isNewUserDocument();
+      allow update: if isAuthenticated() && isUserDocument();
+      allow delete: if isAuthenticated() && isUserDocument();
+    }
+
+    // ==================== BUILDS ====================
+    match /builds/{buildId} {
+      allow read: if isAuthenticated() && isUserDocument();
+      allow create: if isAuthenticated() && isNewUserDocument();
+      allow update: if isAuthenticated() && isUserDocument();
+      allow delete: if isAuthenticated() && isUserDocument();
+    }
+
+    // ==================== USERS ====================
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Users can create/update their own profile
+      allow create, update: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Users can delete their own profile
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ==================== BUG REPORTS ====================
+    match /bugReports/{reportId} {
+      // Users can read their own bug reports
+      allow read: if isAuthenticated() && isUserDocument();
+      
+      // Users can create bug reports
+      allow create: if isAuthenticated() && isNewUserDocument();
+      
+      // Users can delete their own bug reports
+      allow delete: if isAuthenticated() && isUserDocument();
+      
+      // Deny updates (prevent report tampering)
+      allow update: if false;
+    }
+
+    // ==================== DEFAULT (deny everything else) ====================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
