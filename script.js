@@ -1,4 +1,48 @@
-        // Logout Function
+/**
+ * ============================================================================
+ * RACER READY - Main Application Script
+ * ============================================================================
+ * 
+ * This script organizes the complete Racer Ready application logic into
+ * logical sections for maintainability and scalability.
+ * 
+ * SECTIONS:
+ * 1. Authentication & Initialization
+ * 2. Track Management System
+ * 3. Tire Management System
+ * 4. Build Management System
+ * 5. Profile Management
+ * 6. UI Utilities & Modal System
+ * 7. App Navigation & Section Switching
+ * 8. Settings & Configuration
+ * 9. Initialization & Event Setup
+ * 
+ * NAMING CONVENTIONS:
+ * - Functions: camelCase (setupTrackHistory, renderTrackList)
+ * - Variables: camelCase (currentUser, selectedTrack)
+ * - Classes: PascalCase
+ * - Constants: UPPER_SNAKE_CASE
+ * - Private functions: _camelCase (not public API)
+ * 
+ * ERROR HANDLING:
+ * - All async operations wrapped in try/catch
+ * - Errors logged to console
+ * - User-friendly error messages via modals
+ * - Firebase errors checked and handled appropriately
+ * 
+ * PERFORMANCE NOTES:
+ * - Event delegation used for dynamic content
+ * - DOM queries cached when possible
+ * - Firestore queries optimized with WHERE conditions
+ * - Lazy loading for sections (only when accessed)
+ * 
+ * ============================================================================
+ */
+
+        /**
+         * LOGOUT HANDLER
+         * Handles user logout and redirects to signin page
+         */
         const logoutBtn = document.querySelector('.logout');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async function() {
@@ -12,6 +56,29 @@
         }
 
 
+        /**
+         * ========================================================================
+         * SECTION 2: TRACK MANAGEMENT SYSTEM
+         * ========================================================================
+         * 
+         * Manages user's track history, race days, points, and track settings.
+         * 
+         * Key Functions:
+         * - setupTrackHistory()      : Initialize track management
+         * - renderTrackList()        : Display all user's tracks
+         * - addTrack()               : Create new track entry
+         * - renderDayList()          : Display race days for selected track
+         * - viewDay()                : View detailed race day information
+         * - editDay()                : Edit race day details
+         * - renderPointsStandings()  : Display earned points per race
+         * 
+         * Data Structure (Firestore):
+         * - Collection: "tracks"      (user's racing tracks)
+         * - Collection: "days"        (individual race day entries)
+         * - Collection: "tireEvents"  (tie chemical applications)
+         * 
+         * ========================================================================
+         */
 
         // --- Track History Logic ---
         function setupTrackHistory() {
@@ -967,6 +1034,31 @@
         }
         setupTrackHistory();
 
+        /**
+         * ========================================================================
+         * SECTION 3: TIRE MANAGEMENT SYSTEM
+         * ========================================================================
+         * 
+         * Manages tire sets, individual tires, and chemical applications.
+         * 
+         * Key Functions:
+         * - setupTireHistory()      : Initialize tire management
+         * - renderTireSetList()     : Display all tire sets
+         * - addTireSet()            : Create new tire set
+         * - renderTiresList()       : Display tires in a set
+         * - addTire()               : Add individual tire to set
+         * - renderTireEvents()      : Display chemical applications for tire
+         * - addEvent()              : Log new chemical application
+         * - updateEvent()           : Edit existing event
+         * 
+         * Data Structure (Firestore):
+         * - Collection: "tireSets"   (grouped tire sets)
+         * - Collection: "tires"      (individual tires in sets)
+         * - Collection: "tireEvents" (chemical applications and treatments)
+         * 
+         * ========================================================================
+         */
+
         // --- Tire History Logic ---
         function setupTireHistory() {
             const addTireSetBtn = document.getElementById('add-tire-set-btn');
@@ -1889,6 +1981,28 @@
         }
         setupTireHistory();
 
+    /**
+     * ========================================================================
+     * SECTION 4: UI UTILITIES & MODAL SYSTEM
+     * ========================================================================
+     * 
+     * Reusable UI components for alerts, confirmations, and prompts.
+     * 
+     * Functions:
+     * - showAlert()            : Display informational message
+     * - showConfirm()          : Display confirmation dialog
+     * - showPrompt()           : Get user text input
+     * - showSaveBuildModal()   : Save kart build configuration
+     * - closeAlertModal()      : Close alert modal
+     * - closeConfirmModal()    : Close confirm modal
+     * - closeSaveBuildModal()  : Close save build modal
+     * 
+     * All modals return Promises for clean async/await usage.
+     * Icons can be customized with emoji parameters.
+     * 
+     * ========================================================================
+     */
+
     // --- Modal Utilities ---
     function showAlert(message, title = 'Alert', icon = 'ℹ️') {
         return new Promise(resolve => {
@@ -1992,12 +2106,41 @@
         const modal = document.getElementById('save-build-modal');
         if (modal) modal.style.display = 'none';
     }
+
+    /**
+     * ========================================================================
+     * SECTION 5: PROFILE MANAGEMENT
+     * ========================================================================
+     * 
+     * Handles user profile data, settings, and preferences.
+     * 
+     * Key Functions:
+     * - setupProfilePage()          : Initialize profile interface
+     * - loadProfileData()           : Fetch user profile from Firestore
+     * - updateInitials()            : Update profile initials display
+     * - calculateAge()              : Calculate age from DOB
+     * - updateHeaderAvatar()        : Update avatar in header
+     * 
+     * Features:
+     * - Profile picture upload (compressed to base64)
+     * - Edit mode toggle (view/edit)
+     * - Email and password management
+     * - Personal information management
+     * - Age calculation from date of birth
+     * 
+     * ========================================================================
+     */
+
 document.addEventListener('DOMContentLoaded', function () {
     const isSignedIn = () => {
         // Firebase auth is now handled in app.html/sign.html
         return window.currentUser !== null && window.currentUser !== undefined;
     };
 
+    /**
+     * UI COMPONENT: Profile Menu
+     * Displays user profile button and dropdown menu in header
+     */
     // Generic profile menu setup for any page that has .profile-menu
     function setupProfileUI() {
         const profileMenus = document.querySelectorAll('.profile-menu');
@@ -2483,6 +2626,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Build section flow: show choice menu -> category menu -> setup interface
     function setupBuildFlow() {
+        /**
+         * UI COMPONENT: Build Configuration Flow
+         * 
+         * User Journey:
+         * 1. Choice Menu    - Select Load or Create
+         * 2. Category Menu  - Select Kart or Tire setup
+         * 3. Setup Interface - Configure adjustments
+         * 
+         * Supports saving/loading multiple configurations.
+         */
         const choiceMenu = document.getElementById('build-choice-menu');
         const categoryMenu = document.getElementById('build-category-menu');
         const setupInterface = document.getElementById('build-setup-interface');
@@ -2564,6 +2717,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+    /**
+     * ========================================================================
+     * SECTION 6: BUILD MANAGEMENT SYSTEM
+     * ========================================================================
+     * 
+     * Manages kart configuration saves and loads.
+     * 
+     * Functions:
+     * - saveBuild()              : Save current configuration
+     * - loadSavedBuilds()        : Fetch all saved builds from Firestore
+     * - displaySavedBuilds()     : Display saved builds UI
+     * - loadBuildData()          : Load specific build into form
+     * - deleteBuild()            : Delete saved build
+     * - deleteBuildAndRefresh()  : Delete and update UI
+     * 
+     * Data Structure (Firestore):
+     * - Collection: "builds"
+     *   - name: String
+     *   - settings: Object (all configuration values)
+     *   - userId: String
+     *   - timestamp: String
+     * 
+     * ========================================================================
+     */
+
     // Auth forms and tab switching on sign.html
     function setupAuthForms() {
         // Authentication is now handled by Firebase in sign.html
@@ -2578,6 +2756,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // App page section switching
     function setupAppSections() {
+        /**
+         * UI COMPONENT: Section Navigation
+         * 
+         * Manages switching between main app sections:
+         * - Home (instructions)
+         * - Build (kart configuration)
+         * - Track History (race tracking)
+         * - Tire History (tire management)
+         * - Saved Builds (configuration library)
+         * 
+         * Sections fade in/out with animations
+         */
         const sideButtons = document.querySelectorAll('.side-btn[data-section]');
         const sections = document.querySelectorAll('.app-section');
         const instructionCards = document.querySelectorAll('.instruction-card[data-card]');
@@ -2648,6 +2838,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Setup tabs switching for Build section
     function setupTabs() {
+        /**
+         * UI COMPONENT: Tab Navigation
+         * 
+         * Setup tabs control visibility of different configuration panels.
+         * Examples: Frontend Suspension, Rear Suspension, Tires, etc.
+         * 
+         * Each tab toggles visibility of its corresponding panel.
+         */
         const setupTabs = document.querySelectorAll('.setup-tab');
         const setupPanels = document.querySelectorAll('.setup-panel');
 
@@ -2671,6 +2869,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Slider value updates
     function setupSliders() {
+        /**
+         * UI COMPONENT: Numeric Sliders
+         * 
+         * Updates display value when slider is adjusted.
+         * Handles units: T, °, mm, kg, RPM, PSI, %
+         * 
+         * Improves UX by showing current value as user adjusts.
+         */
         const sliders = document.querySelectorAll('.slider');
 
         sliders.forEach(slider => {
@@ -2706,6 +2912,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Firebase Save/Load Build Functions
     function saveBuild() {
+        /**
+         * FIRESTORE OPERATION: Save Build Configuration
+         * 
+         * Collects all form input values and saves to Firestore.
+         * Prompts user for build name before saving.
+         * 
+         * Data saved:
+         * - name: User-provided build name
+         * - timestamp: When saved (ISO string)
+         * - userId: Owner's UID
+         * - settings: All configuration values as object
+         */
         if (!window.currentUser) {
             showAlert('Please log in to save builds.', 'Not Logged In', '⚠️');
             return;
@@ -2746,6 +2964,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadSavedBuilds() {
+        /**
+         * FIRESTORE OPERATION: Query Saved Builds
+         * 
+         * Fetches all builds for current user from Firestore.
+         * Uses WHERE clause to filter by userId for security.
+         * 
+         * Returns: Array of build objects
+         */
         if (!window.currentUser) {
             showAlert('Please log in to view saved builds.', 'Not Logged In', '⚠️');
             return [];
@@ -2775,6 +3001,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function deleteBuild(buildId) {
+        /**
+         * FIRESTORE OPERATION: Delete Build
+         * 
+         * Removes build from Firestore database.
+         * Shows success message to user.
+         */
         if (!window.firebaseDb || !window.firebaseDeleteDoc || !window.firebaseDoc) {
             showAlert('Firebase not initialized yet.', 'Error', '❌');
             return;
@@ -2791,6 +3023,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Display saved builds in the Saved Builds section
     async function displaySavedBuilds() {
+        /**
+         * UI COMPONENT: Saved Builds List
+         * 
+         * Queries and displays all saved builds with:
+         * - Build name
+         * - Save timestamp
+         * - Number of settings configured
+         * - Action buttons (Load, Delete)
+         */
         const buildsListDiv = document.getElementById('saved-builds-list');
         if (!buildsListDiv) return;
 
@@ -2832,6 +3073,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function deleteBuildAndRefresh(buildId) {
+        /**
+         * Deletes build after user confirmation and refreshes display
+         */
         showConfirm('Are you sure you want to delete this build?', 'Delete Build', '⚠️').then(async ok => {
             if (ok) {
                 await deleteBuild(buildId);
@@ -2841,6 +3085,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadBuildData(buildId) {
+        /**
+         * Loads build configuration into form and displays setup interface
+         * 
+         * Process:
+         * 1. Fetch build from Firestore
+         * 2. Clear existing form values
+         * 3. Populate form with saved settings
+         * 4. Show setup interface
+         * 5. Display success message
+         */
         const builds = await loadSavedBuilds();
         const build = builds.find(b => b.id === buildId);
         
@@ -2888,6 +3142,36 @@ document.addEventListener('DOMContentLoaded', function () {
         window.closeSaveBuildModal = closeSaveBuildModal;
     }
 
+    /**
+     * ========================================================================
+     * SECTION 7: APP INITIALIZATION & EVENT SETUP
+     * ========================================================================
+     * 
+     * Initializes all app features when DOM is ready.
+     * This is the entry point that calls all setup functions.
+     * 
+     * Initialization Order:
+     * 1. profileUI        - User menu and authentication
+     * 2. authForms        - Sign in/up forms (sign.html only)
+     * 3. buildFlow        - Build creation flow
+     * 4. appSections      - Section navigation
+     * 5. tabs             - Tab switching
+     * 6. sliders          - Numeric sliders
+     * 7. savedBuilds      - Saved builds display
+     * 
+     * ========================================================================
+     */
+
+    // Make functions globally available if needed
+        window.showAlert = showAlert;
+        window.closeAlertModal = closeAlertModal;
+        window.showPrompt = showPrompt;
+        window.showConfirm = showConfirm;
+        window.closeConfirmModal = closeConfirmModal;
+        window.showSaveBuildModal = showSaveBuildModal;
+        window.closeSaveBuildModal = closeSaveBuildModal;
+    }
+
     // Auto-refresh saved builds when navigating to that section
     function setupSavedBuildsSection() {
         const sideButtons = document.querySelectorAll('.side-btn[data-section]');
@@ -2905,6 +3189,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.deleteBuildAndRefresh = deleteBuildAndRefresh;
     window.loadBuildData = loadBuildData;
 
+    /**
+     * APP INITIALIZATION
+     * 
+     * Called when DOM is fully loaded.
+     * Sets up all features and event listeners.
+     */
     // Initialize behaviors
     setupProfileUI();
     setupAuthForms();
