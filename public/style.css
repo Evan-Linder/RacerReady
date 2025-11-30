@@ -164,6 +164,19 @@ body::before {
     .app-container { position: static; margin: 0 auto; max-width: 1100px; }
 }
 
+/* On mobile, make the logo scroll with content instead of fixed */
+@media (max-width: 900px) {
+    .logo-above-panel {
+        position: static;
+        left: auto;
+        top: auto;
+        width: 100%;
+        padding: 12px 20px;
+        justify-content: center;
+    }
+    .app-logo { height: 76px; }
+}
+
 /* Footer aligned under the app container on app page */
 .app-footer {
     position: fixed;
