@@ -40,6 +40,7 @@
             <button class="side-btn info" data-section="track-history">Track History</button>
             <button class="side-btn info" data-section="tire-history">Tire History</button>
             <button class="side-btn danger" data-section="saved">Saved Builds</button>
+            <button class="side-btn warning" data-section="bug-report">Bug Report</button>
         </nav>
     </aside>
 
@@ -51,6 +52,11 @@
     </div>
 
     <main class="container app-container" role="main">
+        <!-- Global Back to Home button (hidden on Home) -->
+        <div class="app-toolbar">
+            <button class="back-btn" id="back-to-home" aria-label="Back to Home" style="display:none;">Back to
+                Home</button>
+        </div>
         <!-- Default instructions view -->
         <div class="app-section active" data-section-content="home">
             <div class="app-instructions">
@@ -745,6 +751,76 @@
                 <div id="saved-builds-list"></div>
             </div>
         </div>
+
+        <!-- Bug Report Section -->
+        <div class="app-section" data-section-content="bug-report">
+            <h2>Report a Bug</h2>
+            <p>Help us improve! Please describe any issues you encounter.</p>
+            <div class="section-content">
+                <div style="background: rgba(230,238,246,0.05); border: 1px solid rgba(230,238,246,0.15); border-radius: 8px; padding: 24px; max-width: 600px;">
+                    <label for="bug-title-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Bug Title <span style="color: #ff3333;">*</span>
+                    </label>
+                    <input type="text" id="bug-title-input" class="setup-input" placeholder="Brief description of the bug..."
+                        style="max-width: 100%; margin-bottom: 16px;">
+
+                    <label for="bug-category-select" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Category <span style="color: #ff3333;">*</span>
+                    </label>
+                    <select id="bug-category-select" class="setup-input" style="max-width: 100%; margin-bottom: 16px;">
+                        <option value="">-- Select a category --</option>
+                        <option value="build">Build System</option>
+                        <option value="track">Track History</option>
+                        <option value="tire">Tire Management</option>
+                        <option value="profile">Profile</option>
+                        <option value="ui">User Interface</option>
+                        <option value="performance">Performance</option>
+                        <option value="data">Data Sync</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <label for="bug-severity-select" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Severity
+                    </label>
+                    <select id="bug-severity-select" class="setup-input" style="max-width: 100%; margin-bottom: 16px;">
+                        <option value="low">Low - Minor annoyance</option>
+                        <option value="medium" selected>Medium - Affects functionality</option>
+                        <option value="high">High - Major issue</option>
+                        <option value="critical">Critical - App breaking</option>
+                    </select>
+
+                    <label for="bug-description-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Description <span style="color: #ff3333;">*</span>
+                    </label>
+                    <textarea id="bug-description-input" class="setup-input" placeholder="Detailed description of the bug, steps to reproduce, and expected behavior..."
+                        style="max-width: 100%; margin-bottom: 16px; min-height: 100px; resize: vertical;"></textarea>
+
+                    <label for="bug-steps-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Steps to Reproduce
+                    </label>
+                    <textarea id="bug-steps-input" class="setup-input" placeholder="1. Step one&#10;2. Step two&#10;3. Step three..."
+                        style="max-width: 100%; margin-bottom: 16px; min-height: 80px; resize: vertical;"></textarea>
+
+                    <label for="bug-expected-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Expected Behavior
+                    </label>
+                    <input type="text" id="bug-expected-input" class="setup-input" placeholder="What should happen instead..."
+                        style="max-width: 100%; margin-bottom: 16px;">
+
+                    <label for="bug-environment-input" style="display: block; color: rgba(230,238,246,0.9); font-weight: 500; margin-bottom: 8px;">
+                        Environment (Browser, Device)
+                    </label>
+                    <input type="text" id="bug-environment-input" class="setup-input" placeholder="e.g., Chrome on Windows 10, Safari on iPhone..."
+                        style="max-width: 100%; margin-bottom: 20px;">
+
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn primary" onclick="submitBugReport()" style="flex: 1;">🐛 Submit Bug Report</button>
+                        <button class="btn" onclick="clearBugForm()" style="flex: 1; background: rgba(255,255,255,0.05);">Clear Form</button>
+                    </div>
+                    <div id="bug-submit-status" style="margin-top: 16px; text-align: center; display: none;"></div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer class="site-footer app-footer">
@@ -767,8 +843,6 @@
                 </p>
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="closeSaveBuildModal()"
-                    style="background: rgba(255,255,255,0.05);">Cancel</button>
                 <button class="btn primary" onclick="confirmSaveBuild()">Save Build</button>
             </div>
         </div>
@@ -787,8 +861,6 @@
                     style="max-width: 100%; margin-top: 12px;" placeholder="Enter value...">
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="closePromptModal(null)"
-                    style="background: rgba(255,255,255,0.05);">Cancel</button>
                 <button class="btn primary"
                     onclick="closePromptModal(document.getElementById('prompt-modal-input').value)">OK</button>
             </div>
@@ -822,8 +894,20 @@
                 <p id="confirm-modal-message"></p>
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="closeConfirmModal(false)">Cancel</button>
                 <button class="btn primary" onclick="closeConfirmModal(true)">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Saved Builds Modal -->
+    <div class="modal-overlay" id="load-builds-modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>📂 Load Saved Build</h3>
+                <button class="modal-close" onclick="closeLoadBuildsModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="load-builds-list" style="max-height: 500px; overflow-y: auto;">
+                <!-- Builds will be populated here -->
             </div>
         </div>
     </div>

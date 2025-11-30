@@ -1,4 +1,209 @@
 /* Removed modal styles (not referenced in current HTML). Archived in .archive/unused/style.css. */
+/* RESTORED AND FIXED MODAL STYLES FOR MOBILE AND DESKTOP COMPATIBILITY */
+
+/* Modal overlay - fullscreen backdrop */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Modal content box - centered and scrollable if needed */
+.modal-content {
+    background: linear-gradient(180deg, rgba(30, 20, 20, 0.95), rgba(20, 10, 10, 0.98));
+    border: 1px solid rgba(255, 51, 51, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 51, 51, 0.2);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modal header */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.2);
+    flex-shrink: 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #ff3333;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* Modal close button */
+.modal-close {
+    background: transparent;
+    border: none;
+    color: rgba(230, 238, 246, 0.7);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 51, 51, 0.2);
+    color: #ff3333;
+}
+
+/* Modal body - scrollable content area */
+.modal-body {
+    padding: 24px;
+    flex-grow: 1;
+    overflow-y: auto;
+    color: rgba(230, 238, 246, 0.9);
+}
+
+.modal-body label {
+    display: block;
+    color: rgba(230, 238, 246, 0.8);
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 12px;
+}
+
+.modal-body label:first-of-type {
+    margin-top: 0;
+}
+
+.modal-body p {
+    margin: 0 0 12px 0;
+    color: rgba(230, 238, 246, 0.8);
+    line-height: 1.5;
+}
+
+.modal-body input,
+.modal-body textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: inherit;
+}
+
+/* Prevent iOS zoom on input focus */
+@media (max-width: 768px) {
+    .modal-body input,
+    .modal-body textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Modal footer - buttons area */
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 51, 51, 0.2);
+    flex-shrink: 0;
+    justify-content: flex-end;
+}
+
+.modal-footer .btn {
+    padding: 12px 24px;
+    text-align: center;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 640px) {
+    .modal-overlay {
+        padding: 12px;
+    }
+
+    .modal-content {
+        max-width: 100%;
+        max-height: 85vh;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .modal-body {
+        padding: 20px;
+        font-size: 0.95rem;
+    }
+
+    .modal-footer {
+        padding: 16px 20px;
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .modal-footer .btn {
+        width: auto;
+    }
+
+    .modal-body label {
+        font-size: 0.9rem;
+    }
+
+    .modal-body input,
+    .modal-body textarea {
+        font-size: 1rem !important;
+    }
+}
+
+/* Ensure modals don't get cut off on very small screens */
+@media (max-width: 480px) {
+    .modal-overlay {
+        padding: 8px;
+    }
+
+    .modal-content {
+        max-height: 80vh;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        padding: 12px 16px;
+    }
+
+    .modal-header h3 {
+        font-size: 1rem;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-footer {
+        padding: 12px 16px;
+    }
+}
+
+
 /* Basic reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { 
@@ -236,6 +441,11 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
 .btn:hover { background: rgba(14,165,164,0.18); transform: translateY(-1px); }
 
 .site-footer { text-align:center; margin-top: 24px; color: rgba(230,238,246,0.6); }
+
+/* App toolbar with Back button */
+.app-toolbar { display:flex; align-items:center; justify-content:flex-start; margin-bottom: 12px; }
+.back-btn { background: transparent; border: 1px solid rgba(230,238,246,0.12); color: var(--text); padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.back-btn:hover { background: rgba(255,255,255,0.05); }
 
 /* Auth page styles */
 .auth-page { display: flex; justify-content: center; padding: 48px 12px; }
@@ -898,6 +1108,60 @@ p { margin-bottom: 12px; color: rgba(230,238,246,0.8); }
     main section > div[style*="text-align: center"] h2 {
         font-size: 1.7rem !important;
     }
+}
+
+/* Side button variants */
+.side-btn.primary {
+    background: linear-gradient(180deg, #ff3333, #cc0000);
+    border-color: #ff3333;
+    color: #fff;
+}
+
+.side-btn.primary:hover {
+    box-shadow: 0 8px 20px rgba(255, 51, 51, 0.4);
+}
+
+.side-btn.outline {
+    background: transparent;
+    border: 1.5px solid rgba(230,238,246,0.3);
+}
+
+.side-btn.outline:hover {
+    border-color: rgba(230,238,246,0.6);
+    background: rgba(230,238,246,0.05);
+}
+
+.side-btn.info {
+    background: linear-gradient(180deg, rgba(51,153,255,0.2), rgba(51,153,255,0.1));
+    border-color: rgba(51,153,255,0.4);
+    color: #66ccff;
+}
+
+.side-btn.info:hover {
+    border-color: rgba(51,153,255,0.6);
+    background: rgba(51,153,255,0.3);
+}
+
+.side-btn.danger {
+    background: linear-gradient(180deg, rgba(255,51,51,0.2), rgba(255,51,51,0.1));
+    border-color: rgba(255,51,51,0.4);
+    color: #ff6666;
+}
+
+.side-btn.danger:hover {
+    border-color: rgba(255,51,51,0.6);
+    background: rgba(255,51,51,0.3);
+}
+
+.side-btn.warning {
+    background: linear-gradient(180deg, rgba(255,165,0,0.2), rgba(255,140,0,0.1));
+    border-color: rgba(255,165,0,0.4);
+    color: #ffa500;
+}
+
+.side-btn.warning:hover {
+    border-color: rgba(255,165,0,0.6);
+    background: rgba(255,165,0,0.3);
 }
 
 

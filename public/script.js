@@ -2652,10 +2652,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const action = btn.getAttribute('data-action');
 
             if (action === 'load-saved-build') {
-                // Show the Saved Builds section and display builds
-                const savedBtn = document.querySelector('.side-btn[data-section="saved"]');
-                if (savedBtn) savedBtn.click();
-                displaySavedBuilds();
+                // Show the load builds modal
+                showLoadBuildsModal();
                 return;
             } else if (action === 'create-new-build') {
                 // Show the category selection menu
@@ -2771,6 +2769,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const sideButtons = document.querySelectorAll('.side-btn[data-section]');
         const sections = document.querySelectorAll('.app-section');
         const instructionCards = document.querySelectorAll('.instruction-card[data-card]');
+        const backToHomeBtn = document.getElementById('back-to-home');
 
         if (!sideButtons.length || !sections.length) return; // Only run on app.html
 
@@ -2788,6 +2787,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Scroll container to top when switching sections
             const appContainer = document.querySelector('.app-container');
             if (appContainer) appContainer.scrollTop = 0;
+
+            // Toggle Back to Home button visibility
+            if (backToHomeBtn) {
+                backToHomeBtn.style.display = (sectionName === 'home') ? 'none' : '';
+            }
 
             // Reset Build section to show choice menu when navigating to it
             if (sectionName === 'build') {
@@ -2814,6 +2818,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const renderTireSetListEvent = new CustomEvent('loadTireHistory');
                 window.dispatchEvent(renderTireSetListEvent);
             }
+
+            // Load saved builds when Saved Builds is clicked
+            if (sectionName === 'saved') {
+                displaySavedBuilds();
+            }
+        }
+        // Back to Home button handler
+        if (backToHomeBtn) {
+            backToHomeBtn.addEventListener('click', function () {
+                switchSection('home');
+            });
         }
 
         // Add click handlers to side buttons
@@ -3164,12 +3179,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Auto-refresh saved builds when navigating to that section
     function setupSavedBuildsSection() {
-        const sideButtons = document.querySelectorAll('.side-btn[data-section]');
-        sideButtons.forEach(btn => {
-            if (btn.getAttribute('data-section') === 'saved') {
-                btn.addEventListener('click', displaySavedBuilds);
-            }
-        });
+        // Event listener is now handled in setupAppSections > switchSection
+        // This function is kept for consistency but no longer needs button setup
     }
 
     // Make functions globally available
@@ -3178,6 +3189,223 @@ document.addEventListener('DOMContentLoaded', function () {
     window.deleteBuild = deleteBuild;
     window.deleteBuildAndRefresh = deleteBuildAndRefresh;
     window.loadBuildData = loadBuildData;
+
+    /**
+     * ========================================================================
+     * SECTION 11: LOAD BUILDS MODAL SYSTEM
+     * ========================================================================
+     * 
+     * Manages the modal for selecting and loading saved builds.
+     * 
+     * Key Functions:
+     * - showLoadBuildsModal()      : Display modal with scrollable builds list
+     * - closeLoadBuildsModal()     : Close the modal
+     * - loadBuildFromModal()       : Load selected build and close modal
+     * 
+     * ========================================================================
+     */
+
+    /**
+     * Display modal with scrollable list of saved builds
+     */
+    async function showLoadBuildsModal() {
+        const modal = document.getElementById('load-builds-modal');
+        const buildsList = document.getElementById('load-builds-list');
+
+        if (!modal || !buildsList) return;
+
+        buildsList.innerHTML = '<p style="text-align: center; color: rgba(230,238,246,0.7);">Loading builds...</p>';
+        modal.style.display = 'flex';
+
+        try {
+            const builds = await loadSavedBuilds();
+
+            if (!builds || builds.length === 0) {
+                buildsList.innerHTML = '<p style="text-align: center; color: rgba(230,238,246,0.7);">No saved builds yet. Create and save a build first!</p>';
+                return;
+            }
+
+            buildsList.innerHTML = '';
+            builds.forEach(build => {
+                const buildItem = document.createElement('div');
+                buildItem.style.cssText = 'padding: 16px; margin-bottom: 12px; background: rgba(255,51,51,0.08); border: 1px solid rgba(255,51,51,0.2); border-radius: 8px; cursor: pointer; transition: all 0.2s ease;';
+                buildItem.innerHTML = `
+                    <h4 style="margin: 0 0 8px 0; color: #ff3333; font-size: 1.1rem;">${build.name}</h4>
+                    <p style="margin: 4px 0; font-size: 0.85rem; color: rgba(230,238,246,0.6);">
+                        📅 ${new Date(build.timestamp).toLocaleString()}
+                    </p>
+                    <p style="margin: 4px 0; font-size: 0.85rem; color: rgba(230,238,246,0.6);">
+                        ⚙️ ${Object.keys(build.settings || {}).length} settings configured
+                    </p>
+                    <button class="btn primary" onclick="loadBuildFromModal('${build.id}')" style="margin-top: 12px; width: 100%;">📥 Load This Build</button>
+                `;
+                buildItem.onmouseenter = function() {
+                    this.style.background = 'rgba(255,51,51,0.15)';
+                    this.style.borderColor = 'rgba(255,51,51,0.4)';
+                };
+                buildItem.onmouseleave = function() {
+                    this.style.background = 'rgba(255,51,51,0.08)';
+                    this.style.borderColor = 'rgba(255,51,51,0.2)';
+                };
+                buildsList.appendChild(buildItem);
+            });
+        } catch (error) {
+            console.error('Error loading builds modal:', error);
+            buildsList.innerHTML = '<p style="text-align: center; color: #ff6666;">Error loading builds</p>';
+        }
+    }
+
+    /**
+     * Close the load builds modal
+     */
+    function closeLoadBuildsModal() {
+        const modal = document.getElementById('load-builds-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    /**
+     * Load a build from modal and close the modal
+     */
+    async function loadBuildFromModal(buildId) {
+        closeLoadBuildsModal();
+        await loadBuildData(buildId);
+    }
+
+    // Make load builds modal functions globally available
+    window.showLoadBuildsModal = showLoadBuildsModal;
+    window.closeLoadBuildsModal = closeLoadBuildsModal;
+    window.loadBuildFromModal = loadBuildFromModal;
+
+    /**
+     * ========================================================================
+     * SECTION 10: BUG REPORT SYSTEM
+     * ========================================================================
+     * 
+     * Manages bug report submission and storage in Firestore.
+     * 
+     * Key Functions:
+     * - submitBugReport()     : Submit a bug report to Firestore
+     * - clearBugForm()        : Clear all fields in bug report form
+     * 
+     * ========================================================================
+     */
+
+    /**
+     * Submit a bug report to Firestore
+     * Validates form inputs and saves to 'bugReports' collection
+     */
+    async function submitBugReport() {
+        const titleInput = document.getElementById('bug-title-input');
+        const categorySelect = document.getElementById('bug-category-select');
+        const severitySelect = document.getElementById('bug-severity-select');
+        const descriptionInput = document.getElementById('bug-description-input');
+        const stepsInput = document.getElementById('bug-steps-input');
+        const expectedInput = document.getElementById('bug-expected-input');
+        const environmentInput = document.getElementById('bug-environment-input');
+        const statusDiv = document.getElementById('bug-submit-status');
+
+        // Validation
+        if (!titleInput.value.trim()) {
+            showStatusMessage(statusDiv, 'Please enter a bug title', 'error');
+            return;
+        }
+
+        if (!categorySelect.value) {
+            showStatusMessage(statusDiv, 'Please select a category', 'error');
+            return;
+        }
+
+        if (!descriptionInput.value.trim()) {
+            showStatusMessage(statusDiv, 'Please enter a description', 'error');
+            return;
+        }
+
+        try {
+            showStatusMessage(statusDiv, 'Submitting bug report...', 'info');
+
+            // Get browser/environment info automatically
+            const browserInfo = `${navigator.userAgent.substring(0, 100)}...`;
+            const userEnv = environmentInput.value.trim() || browserInfo;
+
+            // Create bug report object
+            const bugReport = {
+                title: titleInput.value.trim(),
+                category: categorySelect.value,
+                severity: severitySelect.value,
+                description: descriptionInput.value.trim(),
+                stepsToReproduce: stepsInput.value.trim() || 'Not provided',
+                expectedBehavior: expectedInput.value.trim() || 'Not provided',
+                environment: userEnv,
+                userId: window.currentUser.uid,
+                userEmail: window.currentUser.email,
+                submittedAt: window.firebaseTimestamp.now(),
+                status: 'open',
+                appVersion: '1.0.0'
+            };
+
+            // Save to Firestore
+            if (!window.firebaseDb || !window.firebaseAddDoc || !window.firebaseCollection) {
+                throw new Error('Firebase not initialized');
+            }
+
+            const docRef = await window.firebaseAddDoc(
+                window.firebaseCollection(window.firebaseDb, 'bugReports'),
+                bugReport
+            );
+
+            showStatusMessage(statusDiv, `✓ Bug report submitted successfully! (ID: ${docRef.id.substring(0, 8)})`, 'success');
+            
+            // Clear form after successful submission
+            setTimeout(() => {
+                clearBugForm();
+                statusDiv.style.display = 'none';
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error submitting bug report:', error);
+            showStatusMessage(statusDiv, `Error submitting bug report: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Clear all fields in the bug report form
+     */
+    function clearBugForm() {
+        document.getElementById('bug-title-input').value = '';
+        document.getElementById('bug-category-select').value = '';
+        document.getElementById('bug-severity-select').value = 'medium';
+        document.getElementById('bug-description-input').value = '';
+        document.getElementById('bug-steps-input').value = '';
+        document.getElementById('bug-expected-input').value = '';
+        document.getElementById('bug-environment-input').value = '';
+        document.getElementById('bug-submit-status').style.display = 'none';
+    }
+
+    /**
+     * Helper function to show status messages in bug report form
+     */
+    function showStatusMessage(statusDiv, message, type) {
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+        
+        if (type === 'success') {
+            statusDiv.style.color = '#66ff66';
+            statusDiv.style.backgroundColor = 'rgba(102,255,102,0.1)';
+        } else if (type === 'error') {
+            statusDiv.style.color = '#ff6666';
+            statusDiv.style.backgroundColor = 'rgba(255,102,102,0.1)';
+        } else if (type === 'info') {
+            statusDiv.style.color = 'rgba(230,238,246,0.7)';
+            statusDiv.style.backgroundColor = 'rgba(230,238,246,0.05)';
+        }
+        statusDiv.style.padding = '12px';
+        statusDiv.style.borderRadius = '4px';
+        statusDiv.style.border = '1px solid currentColor';
+    }
+
+    // Make bug report functions globally available
+    window.submitBugReport = submitBugReport;
+    window.clearBugForm = clearBugForm;
 
     /**
      * APP INITIALIZATION
