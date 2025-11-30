@@ -14,12 +14,12 @@
 export function initializeFirebaseReferences() {
     // This function assumes Firebase SDK is already loaded via CDN in HTML
     // and window.firebase is available
-    
+
     if (!window.firebase) {
         console.error('Firebase SDK not loaded. Check HTML imports.');
         return false;
     }
-    
+
     const {
         initializeApp,
         getAuth,
@@ -34,7 +34,7 @@ export function initializeFirebaseReferences() {
         signInWithPopup,
         GoogleAuthProvider,
     } = window.firebase.auth;
-    
+
     const {
         getFirestore,
         collection,
@@ -50,7 +50,7 @@ export function initializeFirebaseReferences() {
         orderBy,
         limit,
     } = window.firebase.firestore;
-    
+
     const {
         getStorage,
         ref,
@@ -58,7 +58,7 @@ export function initializeFirebaseReferences() {
         getBytes,
         getDownloadURL,
     } = window.firebase.storage;
-    
+
     // Export functions to window for backward compatibility
     window.firebaseSignOut = signOut;
     window.firebaseOnAuthStateChanged = onAuthStateChanged;
@@ -68,7 +68,7 @@ export function initializeFirebaseReferences() {
     window.firebaseUpdatePassword = updatePassword;
     window.firebaseReauthenticateWithCredential = reauthenticateWithCredential;
     window.firebaseEmailAuthProvider = EmailAuthProvider;
-    
+
     window.firebaseCollection = collection;
     window.firebaseQuery = query;
     window.firebaseWhere = where;
@@ -81,13 +81,13 @@ export function initializeFirebaseReferences() {
     window.firebaseSetDoc = setDoc;
     window.firebaseOrderBy = orderBy;
     window.firebaseLimit = limit;
-    
+
     window.firebaseGetStorage = getStorage;
     window.firebaseRef = ref;
     window.firebaseUploadBytes = uploadBytes;
     window.firebaseGetBytes = getBytes;
     window.firebaseGetDownloadURL = getDownloadURL;
-    
+
     return true;
 }
 

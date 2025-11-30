@@ -19,17 +19,17 @@ export function showAlert(message, title = 'Alert', icon = 'ℹ️') {
         const modal = document.getElementById('alert-modal');
         const titleEl = document.getElementById('alert-modal-title');
         const messageEl = document.getElementById('alert-modal-message');
-        
+
         if (modal && titleEl && messageEl) {
             titleEl.textContent = `${icon} ${title}`;
             messageEl.textContent = message;
             modal.style.display = 'flex';
-            
+
             const handler = () => {
                 closeAlertModal();
                 resolve();
             };
-            
+
             modal.querySelector('.btn.primary').onclick = handler;
             modal.querySelector('.modal-close').onclick = handler;
         }
@@ -57,19 +57,19 @@ export function showPrompt(message, title = 'Input', icon = '📝') {
         const titleEl = document.getElementById('prompt-modal-title');
         const messageEl = document.getElementById('prompt-modal-message');
         const inputEl = document.getElementById('prompt-modal-input');
-        
+
         if (modal && titleEl && messageEl && inputEl) {
             titleEl.textContent = `${icon} ${title}`;
             messageEl.textContent = message;
             inputEl.value = '';
             modal.style.display = 'flex';
             inputEl.focus();
-            
+
             const handleClose = (value) => {
                 modal.style.display = 'none';
                 resolve(value);
             };
-            
+
             inputEl.onkeydown = (e) => {
                 if (e.key === 'Enter') {
                     handleClose(inputEl.value);
@@ -77,7 +77,7 @@ export function showPrompt(message, title = 'Input', icon = '📝') {
                     handleClose(null);
                 }
             };
-            
+
             // Make available globally for cancel button
             window.closePromptModal = handleClose;
         }
@@ -96,22 +96,22 @@ export function showConfirm(message, title = 'Confirm', icon = '❓') {
         const modal = document.getElementById('confirm-modal');
         const titleEl = document.getElementById('confirm-modal-title');
         const messageEl = document.getElementById('confirm-modal-message');
-        
+
         if (modal && titleEl && messageEl) {
             titleEl.textContent = `${icon} ${title}`;
             messageEl.textContent = message;
             modal.style.display = 'flex';
-            
+
             const ok = () => {
                 closeConfirmModal();
                 resolve(true);
             };
-            
+
             const cancel = () => {
                 closeConfirmModal();
                 resolve(false);
             };
-            
+
             modal.querySelector('.btn.primary').onclick = ok;
             modal.querySelector('.btn:not(.primary)').onclick = cancel;
             modal.querySelector('.modal-close').onclick = cancel;
@@ -135,12 +135,12 @@ export function showSaveBuildModal() {
     return new Promise(resolve => {
         const modal = document.getElementById('save-build-modal');
         const input = document.getElementById('build-name-input');
-        
+
         if (modal && input) {
             input.value = '';
             modal.style.display = 'flex';
             input.focus();
-            
+
             const save = async () => {
                 const name = input.value.trim();
                 if (!name) {
@@ -150,12 +150,12 @@ export function showSaveBuildModal() {
                 closeSaveBuildModal();
                 resolve(name);
             };
-            
+
             const cancel = () => {
                 closeSaveBuildModal();
                 resolve(null);
             };
-            
+
             modal.querySelector('.btn.primary').onclick = save;
             modal.querySelector('.btn:not(.primary)').onclick = cancel;
             modal.querySelector('.modal-close').onclick = cancel;

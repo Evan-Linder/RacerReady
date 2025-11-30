@@ -23,6 +23,10 @@ pnpm-lock.yaml
 *.sublime-workspace
 .vs/
 
+# 🗂️ Archive & Legacy
+.archive/
+legacy/
+
 # 🖥️ OS Files
 .DS_Store
 .DS_Store?

@@ -1,29 +1,29 @@
 {
-  "name": "racer-ready",
-  "version": "1.0.0",
-  "description": "The ultimate go-kart management platform for racers who demand precision, performance, and results.",
-  "main": "script.js",
-  "type": "module",
-  "scripts": {
-    "dev": "npx http-server -p 8000 -c-1",
-    "build": "echo 'Build complete'",
-    "start": "npx http-server -p 8000",
-    "deploy": "echo 'Ready for deployment to Vercel, Netlify, or Firebase Hosting'"
-  },
-  "keywords": [
-    "go-kart",
-    "racing",
-    "kart-management",
-    "performance-tracking",
-    "tire-management"
-  ],
-  "author": "Evan Linder",
-  "license": "MIT",
-  "dependencies": {
-    "firebase": "^10.7.1"
-  },
-  "devDependencies": {},
-  "engines": {
-    "node": ">=14.0.0"
-  }
+    "name": "racer-ready",
+    "version": "1.0.0",
+    "description": "The ultimate go-kart management platform for racers who demand precision, performance, and results.",
+    "main": "script.js",
+    "type": "module",
+    "scripts": {
+        "dev": "npx http-server -p 8000 -c-1",
+        "build": "echo 'Build complete'",
+        "start": "npx http-server -p 8000",
+        "deploy": "echo 'Ready for deployment to Vercel, Netlify, or Firebase Hosting'"
+    },
+    "keywords": [
+        "go-kart",
+        "racing",
+        "kart-management",
+        "performance-tracking",
+        "tire-management"
+    ],
+    "author": "Evan Linder",
+    "license": "MIT",
+    "dependencies": {
+        "firebase": "^10.7.1"
+    },
+    "devDependencies": {},
+    "engines": {
+        "node": ">=14.0.0"
+    }
 }
