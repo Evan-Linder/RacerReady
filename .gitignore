@@ -1,49 +1,71 @@
-# Environment variables and secrets
+# 🔐 SECURITY - Environment Variables (NEVER COMMIT)
 .env
 .env.local
 .env.*.local
+.env.production
+firebase-credentials.json
 firebase-config.js
 config.local.js
 
-# Dependencies
+# 📦 Dependencies
 node_modules/
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
 
-# Build and distribution
-dist/
-build/
-*.bundle.js
-
-# IDE and editor files
+# 💻 IDE & Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
+*.sublime-project
+*.sublime-workspace
+.vs/
 
-# OS files
+# 🖥️ OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-.DS_Store
+desktop.ini
 
-# Logs
-npm-debug.log
-yarn-error.log
-
-# Firebase
+# 🔥 Firebase
+.firebase/
 .firebaserc
 firebase-debug.log
+firebase-debug.*.log
+storage-rules.json
 
-# Testing
+# 🏗️ Build Output
+dist/
+build/
+*.bundle.js
+.next/
+out/
+.parcel-cache/
+
+# 🧪 Testing
 coverage/
 .nyc_output/
+.coverage
+*.lcov
 
-# Temporary files
+# 📝 Logs
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+logs/
+*.log
+
+# ⏱️ Temporary Files
 *.tmp
 *.bak
 .cache/
-
-# User uploads (if any)
-uploads/
+tmp/
 temp/
+uploads/

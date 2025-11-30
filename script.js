@@ -3162,16 +3162,6 @@ document.addEventListener('DOMContentLoaded', function () {
      * ========================================================================
      */
 
-    // Make functions globally available if needed
-        window.showAlert = showAlert;
-        window.closeAlertModal = closeAlertModal;
-        window.showPrompt = showPrompt;
-        window.showConfirm = showConfirm;
-        window.closeConfirmModal = closeConfirmModal;
-        window.showSaveBuildModal = showSaveBuildModal;
-        window.closeSaveBuildModal = closeSaveBuildModal;
-    }
-
     // Auto-refresh saved builds when navigating to that section
     function setupSavedBuildsSection() {
         const sideButtons = document.querySelectorAll('.side-btn[data-section]');
