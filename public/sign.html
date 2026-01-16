@@ -42,6 +42,7 @@
 
                     <div class="form-row">
                         <button type="submit" class="btn primary">Sign in</button>
+                        <button type="button" id="demo-btn" class="btn">Demo</button>
                         <a class="btn" href="#">Forgot?</a>
                         <span id="signin-error" style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
                     </div>
@@ -102,6 +103,33 @@
         // Sign In Form
         const signInForm = document.getElementById('panel-signin');
         const signinError = document.getElementById('signin-error');
+        const demoBtn = document.getElementById('demo-btn');
+
+        // Demo button click handler
+        demoBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Hide any previous errors
+            signinError.style.display = 'none';
+            
+            try {
+                await signInWithEmailAndPassword(auth, 'demo@demo.com', 'demodemo');
+                // Will redirect via onAuthStateChanged
+            } catch (error) {
+                console.error('Demo login error:', error);
+                let message = 'Demo login failed. Please try again.';
+                if (error.code === 'auth/invalid-credential') {
+                    message = 'Demo account credentials invalid';
+                } else if (error.code === 'auth/user-not-found') {
+                    message = 'Demo account not found';
+                } else if (error.code === 'auth/too-many-requests') {
+                    message = 'Too many failed attempts. Please try again later.';
+                }
+                signinError.textContent = message;
+                signinError.style.display = 'inline';
+            }
+        });
+
         signInForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('si-email').value.trim();

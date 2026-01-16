@@ -18,6 +18,7 @@
 
             <div class="header-actions" aria-hidden="false">
                 <a href="sign.html" class="signin-btn" data-role="signin-link" aria-label="Sign in">Sign in</a>
+                <button id="demo-btn-homepage" class="btn" style="background: none; border: 1px solid rgba(255, 255, 255, 0.3); color: rgba(230, 238, 246, 0.9); padding: 8px 16px; cursor: pointer;" aria-label="Demo">Demo</button>
 
                 <div class="profile-menu" data-role="profile-menu" aria-hidden="true">
                     <button class="profile-btn" aria-haspopup="true" aria-expanded="false"
@@ -127,6 +128,45 @@
     <footer class="site-footer">
         <small>&copy; 2025 Racer Ready</small>
     </footer>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi_oZtWxAvLa3aKeb_u1L_Gg31Bbf9u-A",
+            authDomain: "racerready-a70d1.firebaseapp.com",
+            projectId: "racerready-a70d1",
+            storageBucket: "racerready-a70d1.firebasestorage.app",
+            messagingSenderId: "101209144078",
+            appId: "1:101209144078:web:133e745dd019211e63f55f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Demo button click handler
+        const demoBtnHomepage = document.getElementById('demo-btn-homepage');
+        if (demoBtnHomepage) {
+            demoBtnHomepage.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signInWithEmailAndPassword(auth, 'demo@demo.com', 'demodemo');
+                    // Will redirect via onAuthStateChanged
+                } catch (error) {
+                    console.error('Demo login error:', error);
+                    alert('Demo login failed. Please try again.');
+                }
+            });
+        }
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, redirect to app
+                window.location.href = 'app.html';
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 
