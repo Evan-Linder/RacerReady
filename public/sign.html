@@ -44,7 +44,8 @@
                         <button type="submit" class="btn primary">Sign in</button>
                         <button type="button" id="demo-btn" class="btn">Demo</button>
                         <a class="btn" href="#">Forgot?</a>
-                        <span id="signin-error" style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
+                        <span id="signin-error"
+                            style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
                     </div>
                 </form>
 
@@ -63,7 +64,8 @@
 
                     <div class="form-row">
                         <button type="submit" class="btn primary">Create account</button>
-                        <span id="create-error" style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
+                        <span id="create-error"
+                            style="color: #ff3333; font-size: 0.85rem; margin-left: 12px; display: none;"></span>
                     </div>
                 </form>
             </div>
@@ -108,10 +110,10 @@
         // Demo button click handler
         demoBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
+
             // Hide any previous errors
             signinError.style.display = 'none';
-            
+
             try {
                 await signInWithEmailAndPassword(auth, 'demo.demo@gmail.com', 'demodemo');
                 // Will redirect via onAuthStateChanged
@@ -134,10 +136,10 @@
             e.preventDefault();
             const email = document.getElementById('si-email').value.trim();
             const password = document.getElementById('si-pass').value;
-            
+
             // Hide any previous errors
             signinError.style.display = 'none';
-            
+
             // Validate fields
             if (!email || !password) {
                 signinError.textContent = 'Please fill in all fields';
@@ -173,10 +175,10 @@
             const email = document.getElementById('ca-email').value.trim();
             const password = document.getElementById('ca-pass').value;
             const password2 = document.getElementById('ca-pass2').value;
-            
+
             // Hide any previous errors
             createError.style.display = 'none';
-            
+
             // Validate fields
             if (!email || !password || !password2) {
                 createError.textContent = 'Please fill in all fields';
